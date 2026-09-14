@@ -40,7 +40,7 @@ def get_target_config_path(client: str) -> Path:
         return home / ".cursor" / "mcp.json"
     elif client in ["antigravity", "google-antigravity"]:
         return home / ".gemini" / "antigravity" / "mcp_servers.json"
-    elif client in ["claude", "claude-desktop"]:
+    elif client in ["claude", "claude-desktop", "claudedesktop"]:
         if sys.platform == "darwin":
             return home / "Library" / "Application Support" / "Claude" / "claude_desktop_config.json"
         elif sys.platform == "win32":
@@ -82,3 +82,24 @@ def install_mcp_config(client: str) -> Tuple[bool, str, Path]:
         json.dump(data, f, indent=2)
 
     return True, f"Successfully injected contextsync into {client.capitalize()}", config_path
+
+def verify_mcp_config(client: str) -> bool:
+    """Check if the contextsync MCP server is present in the client's config file."""
+    try:
+        if client == "python_sdk" or client == "claudecode":
+            # These are CLI/Library based, we can't easily verify a global JSON config
+            return True 
+            
+        config_path = get_target_config_path(client)
+        if not config_path.exists():
+            return False
+            
+        with open(config_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            
+        if "mcpServers" in data and "contextsync" in data["mcpServers"]:
+            return True
+            
+        return False
+    except Exception:
+        return False

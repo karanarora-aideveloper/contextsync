@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from contextsync.memory import MemoryEngine
 from contextsync.store.user_store import UserStore
+from contextsync.installer import verify_mcp_config
 from contextsync.config import CORTEX_DATA_DIR
 from contextsync import __version__
 
@@ -181,10 +182,20 @@ async def test_connector(
     req: TestConnectorRequest,
     user: Dict[str, Any] = Depends(get_current_user)
 ):
-    """Verify that a connector can successfully communicate with the ContextSync vault."""
+    """Verify that a connector is configured and can communicate with the vault."""
     start_time = time.time()
     stats = engine.stats(user_id=user["id"])
     latency_ms = round((time.time() - start_time) * 1000, 2)
+    
+    # Check if actually configured on the filesystem
+    is_configured = verify_mcp_config(req.connector_id)
+    
+    if not is_configured:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Configuration for {req.connector_id} not detected. Please follow the setup instructions first."
+        )
+
     return {
         "status": "connected",
         "connector_id": req.connector_id,
@@ -195,5 +206,5 @@ async def test_connector(
         "rules_count": stats["total_memories"],
         "topics_count": stats["entities"],
         "links_count": stats["relations"],
-        "message": f"Connection to {req.connector_id.capitalize()} verified. Vault is active and ready."
+        "message": f"Verified! ContextSync detected in {req.connector_id.capitalize()} config."
     }

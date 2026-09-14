@@ -52,7 +52,7 @@ def test_auth_and_protected_api_flow():
     assert len(rec_res.json()["memories"]) >= 1
 
     # 7. Test connector verification endpoint
-    test_conn_res = client.post("/api/connectors/test", json={"connector_id": "cursor"}, headers=headers)
+    test_conn_res = client.post("/api/connectors/test", json={"connector_id": "python_sdk"}, headers=headers)
     assert test_conn_res.status_code == 200
     assert test_conn_res.json()["status"] == "connected"
     assert test_conn_res.json()["api_key_valid"] is True
