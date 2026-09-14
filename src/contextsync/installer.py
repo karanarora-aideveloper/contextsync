@@ -49,7 +49,7 @@ def get_target_config_path(client: str) -> Path:
             return home / ".config" / "Claude" / "claude_desktop_config.json"
     elif client == "windsurf":
         return home / ".codeium" / "windsurf" / "mcp_config.json"
-    elif client in ["cline", "roo-code"]:
+    elif client in ["cline", "roo-code", "vscode"]:
         if sys.platform == "darwin":
             return home / "Library" / "Application Support" / "Code" / "User" / "globalStorage" / "saoudrizwan.claude-dev" / "settings" / "cline_mcp_settings.json"
         else:
@@ -101,7 +101,8 @@ def check_live_process_tree_for_connector(connector_id: str) -> bool:
             "claudedesktop": ["Claude.app", "claude desktop"],
             "claudecode": ["claude"],
             "windsurf": ["windsurf", "Windsurf.app"],
-            "cline": ["Code Helper", "VS Code", "cursor"], # Cline runs in VS Code/Cursor extension host
+            "cline": ["Code Helper", "VS Code", "cursor"],
+            "vscode": ["Code Helper", "VS Code", "cursor"],
             "continue": ["Code Helper", "VS Code", "cursor"]
         }.get(connector_id, [connector_id])
         

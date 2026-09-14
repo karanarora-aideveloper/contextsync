@@ -400,17 +400,21 @@ export default function DashboardPage() {
 }`
     },
     {
-      id: "cline",
-      name: "Cline / Roo Code",
-      category: "VS Code Extension",
-      badge: "Autonomous Agent",
-      description: "Autonomous coding agent extension inside Visual Studio Code.",
-      command: `// Add to cline_mcp_settings.json`,
+      id: "vscode",
+      name: "Visual Studio Code",
+      category: "IDE (via Cline/Roo)",
+      badge: "VS Code",
+      description: "Use ContextSync in VS Code via the Cline or Roo Code extensions.",
+      command: `// Add to cline_mcp_settings.json
+// (VS Code > Command Palette > 'Cline: Open MCP Settings')`,
       jsonConfig: `{
   "mcpServers": {
     "contextsync": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/karanarora-aideveloper/contextsync", "contextsync", "mcp"]
+      "args": ["--from", "git+https://github.com/karanarora-aideveloper/contextsync", "contextsync", "mcp"],
+      "env": {
+        "CONTEXTSYNC_API_KEY": "${userKey}"
+      }
     }
   }
 }`
