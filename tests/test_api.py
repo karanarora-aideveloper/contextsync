@@ -51,6 +51,12 @@ def test_auth_and_protected_api_flow():
     assert rec_res.status_code == 200
     assert len(rec_res.json()["memories"]) >= 1
 
-    # 7. Delete memory
+    # 7. Test connector verification endpoint
+    test_conn_res = client.post("/api/connectors/test", json={"connector_id": "cursor"}, headers=headers)
+    assert test_conn_res.status_code == 200
+    assert test_conn_res.json()["status"] == "connected"
+    assert test_conn_res.json()["api_key_valid"] is True
+
+    # 8. Delete memory
     del_res = client.delete(f"/api/memories/{mem_id}", headers=headers)
     assert del_res.status_code == 200

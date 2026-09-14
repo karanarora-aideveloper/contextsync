@@ -23,7 +23,10 @@ import {
   Plug, 
   Terminal,
   Code2,
-  Info
+  Info,
+  Activity,
+  CheckCircle2,
+  AlertCircle
 } from "lucide-react";
 import { useTheme } from "../../components/ThemeContext";
 import ThemeToggle from "../../components/ThemeToggle";
@@ -108,6 +111,14 @@ export default function DashboardPage() {
   const [copiedKey, setCopiedKey] = useState(false);
   const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
   const [selectedConnector, setSelectedConnector] = useState<string>("antigravity");
+  const [testingConnector, setTestingConnector] = useState(false);
+  const [testResult, setTestResult] = useState<{
+    connector_id: string;
+    status: "success" | "error";
+    latency_ms?: number;
+    message: string;
+    details?: string;
+  } | null>(null);
 
   // New Memory Form
   const [newContent, setNewContent] = useState("");
@@ -266,6 +277,45 @@ export default function DashboardPage() {
       console.error(err);
     } finally {
       setIsSearching(false);
+    }
+  };
+
+  const handleTestConnection = async (connectorId: string, connectorName: string) => {
+    setTestingConnector(true);
+    setTestResult(null);
+    const token = localStorage.getItem("ctx_token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/connectors/test`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` 
+        },
+        body: JSON.stringify({ connector_id: connectorId })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setTestResult({
+          connector_id: connectorId,
+          status: "success",
+          latency_ms: data.latency_ms,
+          message: `Connection Verified! ${connectorName} can reach your vault.`,
+          details: `API Key active · Handshake: ${data.latency_ms}ms · ${data.rules_count} rules ready`
+        });
+      } else {
+        throw new Error(data.detail || "Connection test failed.");
+      }
+    } catch (err: any) {
+      setTestResult({
+        connector_id: connectorId,
+        status: "error",
+        message: `Connection Test Failed`,
+        details: err.message || "Ensure the ContextSync server is running (uv run contextsync serve)."
+      });
+    } finally {
+      setTestingConnector(false);
     }
   };
 
@@ -650,16 +700,79 @@ print(res.formatted_context)`
 
               {/* Connector Configuration Pane */}
               <div className="md:col-span-2 p-6 rounded-2xl bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
-                <div className="space-y-1.5 pb-4 border-b border-slate-200 dark:border-slate-800">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                      <span>{currentConnectorData.name}</span>
-                    </h3>
-                    <span className="text-xs font-mono px-2.5 py-1 rounded bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20 font-semibold">
-                      {currentConnectorData.category}
-                    </span>
+                <div className="space-y-3 pb-4 border-b border-slate-200 dark:border-slate-800">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                        {currentConnectorData.name}
+                      </h3>
+                      <span className="text-xs font-mono px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20 font-semibold">
+                        {currentConnectorData.category}
+                      </span>
+                    </div>
+
+                    {/* Test Connection Button */}
+                    <button
+                      onClick={() => handleTestConnection(currentConnectorData.id, currentConnectorData.name)}
+                      disabled={testingConnector}
+                      className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition-all disabled:opacity-50 w-fit cursor-pointer"
+                      title="Test connection to your ContextSync vault"
+                    >
+                      <Activity className={`h-3.5 w-3.5 ${testingConnector ? "animate-spin" : ""}`} />
+                      <span>{testingConnector ? "Testing..." : "Test Connection"}</span>
+                    </button>
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-400">{currentConnectorData.description}</p>
+
+                  {/* Test Connection Status Banner */}
+                  {testResult && testResult.connector_id === currentConnectorData.id && (
+                    <div className={`p-4 rounded-xl border flex items-start justify-between gap-3 animate-in fade-in duration-200 ${
+                      testResult.status === "success"
+                        ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-500/30"
+                        : "bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-500/30"
+                    }`}>
+                      <div className="flex items-start gap-3">
+                        <div className={`h-7 w-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                          testResult.status === "success" 
+                            ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400" 
+                            : "bg-rose-500/20 text-rose-600 dark:text-rose-400"
+                        }`}>
+                          {testResult.status === "success" ? (
+                            <CheckCircle2 className="h-4 w-4" />
+                          ) : (
+                            <AlertCircle className="h-4 w-4" />
+                          )}
+                        </div>
+                        <div className="space-y-0.5">
+                          <div className={`font-semibold text-sm flex items-center gap-2 ${
+                            testResult.status === "success" 
+                              ? "text-emerald-900 dark:text-emerald-200" 
+                              : "text-rose-900 dark:text-rose-200"
+                          }`}>
+                            <span>{testResult.message}</span>
+                            {testResult.latency_ms && (
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300">
+                                {testResult.latency_ms}ms ping
+                              </span>
+                            )}
+                          </div>
+                          <p className={`text-xs ${
+                            testResult.status === "success" 
+                              ? "text-emerald-700 dark:text-emerald-400 font-mono" 
+                              : "text-rose-700 dark:text-rose-400"
+                          }`}>
+                            {testResult.details}
+                          </p>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => setTestResult(null)} 
+                        className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* 1-Click Command Snippet */}
@@ -699,6 +812,26 @@ print(res.formatted_context)`
                   </div>
                   <pre className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300 overflow-x-auto leading-relaxed select-all shadow-inner">
                     {currentConnectorData.jsonConfig}
+                  </pre>
+                </div>
+
+                {/* Option C: Test via Terminal */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <Activity className="h-3.5 w-3.5 text-amber-500" />
+                      <span>Option C: Quick Terminal Health Check</span>
+                    </span>
+                    <button
+                      onClick={() => copyCode(`curl -s -H "X-API-Key: ${userKey}" http://127.0.0.1:8000/api/stats`, "curl")}
+                      className="text-xs text-amber-600 dark:text-amber-400 hover:text-amber-500 flex items-center gap-1 font-medium"
+                    >
+                      {copiedSnippet === "curl" ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                      <span>{copiedSnippet === "curl" ? "Copied!" : "Copy Curl"}</span>
+                    </button>
+                  </div>
+                  <pre className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-amber-400 overflow-x-auto select-all shadow-inner">
+                    {`curl -s -H "X-API-Key: ${userKey}" http://127.0.0.1:8000/api/stats`}
                   </pre>
                 </div>
               </div>

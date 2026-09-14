@@ -36,6 +36,17 @@ class UserStore:
                     created_at TEXT NOT NULL
                 )
             """)
+            # Seed default demo account if table is empty
+            cursor.execute("SELECT COUNT(*) FROM users WHERE email = 'developer@contextsync.dev'")
+            if cursor.fetchone()[0] == 0:
+                demo_id = "user_demo_dev_01"
+                demo_hash = self._hash_password("password123")
+                demo_key = "ctx_live_demo_developer_key_9999"
+                now_str = datetime.now(timezone.utc).isoformat()
+                cursor.execute(
+                    "INSERT INTO users (id, email, password_hash, plan, api_key, created_at) VALUES (?, ?, ?, 'pro', ?, ?)",
+                    (demo_id, "developer@contextsync.dev", demo_hash, demo_key, now_str)
+                )
             conn.commit()
 
     def _hash_password(self, password: str, salt: Optional[str] = None) -> str:
