@@ -198,10 +198,7 @@ export default function DashboardPage() {
 
   const handleUpgrade = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedPlan === "byok" && !llmKey.trim()) {
-      alert("Please provide an API key for the BYOK plan.");
-      return;
-    }
+
     const token = localStorage.getItem("ctx_token");
     if (!token) return;
     
@@ -213,7 +210,7 @@ export default function DashboardPage() {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ plan: selectedPlan, llm_key: selectedPlan === "byok" ? llmKey : undefined })
+        body: JSON.stringify({ plan: selectedPlan, llm_key: undefined })
       });
       if (res.ok) {
         setIsUpgradeModalOpen(false);
@@ -538,7 +535,7 @@ print(res.formatted_context)`
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
               <span>
                 {user?.plan === 'pro' ? 'Pro Plan ($9/mo)' : 
-                 user?.plan === 'byok' ? 'BYOK Plan' : 
+                  
                  'Free Tier (50 Max)'}
               </span>
             </button>
@@ -1093,32 +1090,7 @@ print(res.formatted_context)`
                     </div>
                   </label>
 
-                  <label className={`flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedPlan === 'byok' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-800'}`}>
-                    <input type="radio" name="plan" value="byok" checked={selectedPlan === 'byok'} onChange={() => setSelectedPlan('byok')} className="mt-1" />
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center mb-1">
-                        <div className="font-bold text-slate-900 dark:text-white">Bring Your Own Key</div>
-                        <div className="text-sm font-semibold text-slate-500">Your LLM Costs</div>
-                      </div>
-                      <ul className="text-xs text-slate-600 dark:text-slate-400 space-y-1.5 mt-2">
-                        <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-emerald-500"/> <span className="font-medium text-slate-700 dark:text-slate-300">Unlimited Credits</span> (Memories)</li>
-                        <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-emerald-500"/> Provide your own LLM API Key</li>
-                      </ul>
-                      
-                      {selectedPlan === 'byok' && (
-                        <div className="mt-4">
-                          <input 
-                            type="password" 
-                            placeholder="Enter your API Key (e.g., sk-...)"
-                            value={llmKey}
-                            onChange={(e) => setLlmKey(e.target.value)}
-                            className={`w-full rounded-lg text-sm px-4 py-2.5 border focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${theme === 'light' ? 'border-slate-300 bg-white' : 'border-slate-600 bg-slate-800'}`}
-                            required
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </label>
+                  
 
                   <label className={`flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedPlan === 'pro' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-800'}`}>
                     <input type="radio" name="plan" value="pro" checked={selectedPlan === 'pro'} onChange={() => setSelectedPlan('pro')} className="mt-1" />

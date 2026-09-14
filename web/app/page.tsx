@@ -1,23 +1,16 @@
+"use client";
+
 import Link from "next/link";
-import { Terminal, Brain, Cpu, Database, ArrowRight, CheckCircle2, ShieldCheck, Zap, Layers, Sparkles } from "lucide-react";
-import ThemeToggle from "../components/ThemeToggle";
+import { Brain, Sparkles, Database, Layers, CheckCircle2, ChevronRight, Zap, Code2, Cpu } from "lucide-react";
 
-function GithubIcon({ className }: { className?: string }) {
+export default function Home() {
   return (
-    <svg className={className} fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-      <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-    </svg>
-  );
-}
-
-export default function HomePage() {
-  return (
-    <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-indigo-500 selection:text-white transition-colors duration-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 selection:bg-indigo-500 selection:text-white font-sans">
       {/* Navigation */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-slate-950/80 border-b border-slate-200 dark:border-slate-800/80 px-6 py-4 transition-colors duration-200">
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/70 dark:bg-slate-950/70 border-b border-slate-200/80 dark:border-slate-800/80 px-6 py-4 transition-all">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl overflow-hidden shadow-lg shadow-indigo-500/25 border border-slate-200 dark:border-slate-800">
+            <div className="h-10 w-10 rounded-xl overflow-hidden shadow-lg shadow-indigo-500/20 border border-slate-200 dark:border-slate-800 flex items-center justify-center bg-white dark:bg-slate-900">
               <img 
                 src="/logo.jpg" 
                 alt="ContextSync Logo" 
@@ -27,146 +20,130 @@ export default function HomePage() {
             <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">
               ContextSync
             </span>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
-              contextsync.dev
-            </span>
+          </div>
+          
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-slate-300">
+            <a href="#features" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">How it Works</a>
+            <a href="#pricing" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Pricing</a>
+            <a href="https://github.com/karanarora-aideveloper/contextsync" target="_blank" rel="noreferrer" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">GitHub</a>
           </div>
 
-          <nav className="flex items-center gap-5 text-sm">
-            <Link href="#features" className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors hidden sm:block">
-              Features
-            </Link>
-            <Link href="#pricing" className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors hidden sm:block">
-              Pricing
-            </Link>
-            <a
-              href="https://github.com/karanarora-aideveloper/contextsync"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
-            >
-              <GithubIcon className="h-4 w-4" />
-              <span className="hidden sm:inline">GitHub</span>
-            </a>
-            <ThemeToggle />
-            <Link
-              href="/login"
-              className="text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white font-medium transition-colors"
+          <div className="flex items-center gap-4">
+            <Link 
+              href="/login" 
+              className="hidden md:inline-flex text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
             >
               Sign In
             </Link>
-            <Link
-              href="/signup"
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium shadow-md shadow-indigo-500/20 transition-all"
+            <Link 
+              href="/signup" 
+              className="text-sm font-semibold bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 px-5 py-2.5 rounded-full transition-all shadow-sm hover:shadow active:scale-95"
             >
-              <span>Get Started</span>
-              <ArrowRight className="h-4 w-4" />
+              Get Started Free
             </Link>
-          </nav>
+          </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-20 px-6 overflow-hidden">
-        <div className="absolute inset-0 -z-10 flex items-center justify-center">
-          <div className="w-[600px] h-[600px] bg-indigo-500/15 rounded-full blur-3xl opacity-50" />
-          <div className="w-[500px] h-[500px] bg-purple-500/15 rounded-full blur-3xl opacity-50" />
-        </div>
-
-        <div className="max-w-5xl mx-auto text-center space-y-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 shadow-sm">
-            <Sparkles className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
-            <span>Open-Core AI Memory Engine with Hybrid Knowledge Graph & Vector Search</span>
+      <section className="relative pt-24 pb-32 px-6 overflow-hidden">
+        {/* Abstract Background Elements */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-500/10 dark:bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-purple-500/10 dark:bg-purple-500/5 blur-[100px] rounded-full pointer-events-none" />
+        
+        <div className="max-w-5xl mx-auto text-center relative z-10 space-y-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-sm font-semibold shadow-sm mx-auto">
+            <Sparkles className="h-4 w-4" />
+            <span>Now Powered by DeepSeek for Flawless Entity Extraction</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight md:leading-none text-slate-900 dark:text-white">
-            Never Re-Explain Your Code <br />
-            <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
-              To Your AI Again.
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+            Give Your AI Agents <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+              Infinite Memory.
             </span>
           </h1>
 
           <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Stop repeating architecture decisions, conventions, and database schemas. ContextSync creates an interconnected 
-            neural Knowledge Graph that Cursor, Claude Code, and Windsurf recall seamlessly.
+            Stop repeating architecture decisions, styling conventions, and database schemas. ContextSync builds a permanent <strong>Knowledge Graph</strong> that Cursor, Claude Code, and Windsurf can instantly recall.
           </p>
 
-          {/* 1-Click Terminal Command */}
-          <div className="max-w-2xl mx-auto p-4 rounded-2xl bg-slate-950 border border-slate-800 text-left shadow-2xl">
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800/80 text-xs text-slate-400">
-              <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-rose-500/80" />
-                <span className="h-3 w-3 rounded-full bg-amber-500/80" />
-                <span className="h-3 w-3 rounded-full bg-emerald-500/80" />
-                <span className="ml-2 font-mono">1-Click Install into Cursor</span>
-              </div>
-              <span className="text-indigo-400 font-mono">Terminal</span>
-            </div>
-            <code className="text-sm font-mono text-emerald-400 block select-all">
-              uvx --from git+https://github.com/karanarora-aideveloper/contextsync contextsync install-mcp cursor
-            </code>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-            <Link
-              href="/dashboard"
-              className="px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all shadow-lg shadow-indigo-500/25 flex items-center gap-2"
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
+            <Link 
+              href="/signup" 
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all shadow-lg shadow-indigo-500/25 active:scale-95"
             >
-              <span>Launch Live Dashboard</span>
-              <ArrowRight className="h-4 w-4" />
+              Start Syncing for Free
+              <ChevronRight className="h-5 w-5" />
             </Link>
-            <a
+            <a 
               href="https://github.com/karanarora-aideveloper/contextsync"
               target="_blank"
               rel="noreferrer"
-              className="px-6 py-3.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 font-medium transition-all shadow-sm flex items-center gap-2"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300 px-8 py-4 rounded-full font-semibold text-lg transition-all shadow-sm active:scale-95"
             >
-              <GithubIcon className="h-5 w-5" />
-              <span>Star on GitHub</span>
+              <Code2 className="h-5 w-5" />
+              View Documentation
             </a>
+          </div>
+
+          {/* Social Proof / IDE Support */}
+          <div className="pt-16 border-t border-slate-200/50 dark:border-slate-800/50 mt-16 max-w-3xl mx-auto">
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-6">Natively Connects With</p>
+            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
+              <span className="text-xl font-bold font-mono text-slate-900 dark:text-white flex items-center gap-2">
+                <div className="h-6 w-6 rounded bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-xs">C</div> Cursor
+              </span>
+              <span className="text-xl font-bold font-mono text-slate-900 dark:text-white flex items-center gap-2">
+                <div className="h-6 w-6 rounded bg-orange-500 text-white flex items-center justify-center text-xs">AI</div> Claude Code
+              </span>
+              <span className="text-xl font-bold font-mono text-slate-900 dark:text-white flex items-center gap-2">
+                <div className="h-6 w-6 rounded bg-blue-500 text-white flex items-center justify-center text-xs">VS</div> VS Code (Roo)
+              </span>
+              <span className="text-xl font-bold font-mono text-slate-900 dark:text-white flex items-center gap-2">
+                <div className="h-6 w-6 rounded bg-indigo-500 text-white flex items-center justify-center text-xs">AG</div> Antigravity
+              </span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Tri-Store Architecture Section */}
-      <section id="features" className="py-20 px-6 border-t border-slate-200 dark:border-slate-900 bg-slate-100/50 dark:bg-slate-950/60">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Under The Hood</h2>
-            <h3 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">The Hybrid Tri-Store Architecture</h3>
-            <p className="text-slate-600 dark:text-slate-400">
-              Unlike dumb RAG chunking, ContextSync mimics the human brain by fusing vector embeddings with relational graph memory.
-            </p>
+      {/* Features Section */}
+      <section id="features" className="py-24 px-6 bg-white dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-900">
+        <div className="max-w-7xl mx-auto space-y-16">
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">Built for Agentic Coding</h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400">ContextSync isn't just a database. It's a dual-engine architecture designed specifically to feed Large Language Models the exact context they need.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/80 hover:border-indigo-400 dark:hover:border-indigo-500/50 transition-all shadow-sm space-y-4">
-              <div className="h-12 w-12 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                <Database className="h-6 w-6" />
+            <div className="p-8 rounded-3xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 hover:shadow-lg transition-all group">
+              <div className="h-14 w-14 rounded-2xl bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Cpu className="h-7 w-7" />
               </div>
-              <h4 className="text-xl font-semibold text-slate-900 dark:text-white">Embedded LanceDB Vectors</h4>
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                Blazing fast, zero-server vector similarity search. Text embeddings are indexed instantly on disk with zero external database dependencies.
+              <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-3">DeepSeek AI Engine</h4>
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                Uses advanced DeepSeek inference to parse your unstructured rules and automatically extract highly structured JSON entities and conceptual relationships.
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/80 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all shadow-sm space-y-4">
-              <div className="h-12 w-12 rounded-xl bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400">
-                <Layers className="h-6 w-6" />
+            <div className="p-8 rounded-3xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 hover:shadow-lg transition-all group">
+              <div className="h-14 w-14 rounded-2xl bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Layers className="h-7 w-7" />
               </div>
-              <h4 className="text-xl font-semibold text-slate-900 dark:text-white">SQLite Knowledge Graph</h4>
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                Extracts entities and relationships into an interconnected web. Your AI can follow multi-hop connections across different services.
+              <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Graph + Vector Hybrid</h4>
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                Combines SQLite Knowledge Graphs for logical relational tracing and LanceDB for high-speed semantic vector similarity search.
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/80 hover:border-pink-400 dark:hover:border-pink-500/50 transition-all shadow-sm space-y-4">
-              <div className="h-12 w-12 rounded-xl bg-pink-50 dark:bg-pink-500/10 border border-pink-200 dark:border-pink-500/20 flex items-center justify-center text-pink-600 dark:text-pink-400">
-                <Zap className="h-6 w-6" />
+            <div className="p-8 rounded-3xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-pink-500/50 hover:shadow-lg transition-all group">
+              <div className="h-14 w-14 rounded-2xl bg-pink-100 dark:bg-pink-500/20 text-pink-600 dark:text-pink-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Zap className="h-7 w-7" />
               </div>
-              <h4 className="text-xl font-semibold text-slate-900 dark:text-white">Gemini 2.0 Flash Extraction</h4>
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                Powered by Google Gemini 2.0 Flash for structured JSON entity extraction in milliseconds at less than a fraction of a cent per memory.
+              <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Universal MCP Standard</h4>
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                Built natively on Anthropic's Model Context Protocol (MCP). It runs securely in your local environment via stdio and connects to any compliant AI IDE instantly.
               </p>
             </div>
           </div>
@@ -174,67 +151,78 @@ export default function HomePage() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-6 border-t border-slate-200 dark:border-slate-900">
+      <section id="pricing" className="py-24 px-6 border-t border-slate-200 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-950/50">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Simple & Transparent</h2>
-            <h3 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">Fair Pricing for Serious Builders</h3>
-            <p className="text-slate-600 dark:text-slate-400">
-              Run it 100% locally for free, or unlock seamless cross-device cloud synchronization.
+          <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Simple Pricing</h2>
+            <h3 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white">Fair pricing for serious builders.</h3>
+            <p className="text-lg text-slate-600 dark:text-slate-400">
+              Start local for free, or go Pro to get full cross-device synchronization and visual dashboards. No BYOK complexity—we cover the AI costs.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
             {/* Free Tier */}
-            <div className="p-8 rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
-              <div className="space-y-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Developer</span>
-                <div className="text-4xl font-extrabold text-slate-900 dark:text-white">$0 <span className="text-sm font-normal text-slate-500">/ forever</span></div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">For solo developers running everything locally on their laptop.</p>
+            <div className="p-10 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+              <div className="space-y-4 mb-8">
+                <span className="inline-block px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-sm font-bold text-slate-700 dark:text-slate-300">Free Tier</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-5xl font-extrabold text-slate-900 dark:text-white">$0</span>
+                  <span className="text-slate-500 font-medium">/ forever</span>
+                </div>
+                <p className="text-slate-600 dark:text-slate-400">Perfect for solo developers working on a single machine.</p>
               </div>
 
-              <ul className="space-y-3 text-sm text-slate-700 dark:text-slate-300">
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> 100% Local Open-Source Core</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Embedded LanceDB + SQLite</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Standard MCP for Cursor & Claude</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Offline Heuristic Mode</li>
-              </ul>
+              <div className="flex-1 space-y-6">
+                <ul className="space-y-4 text-slate-700 dark:text-slate-300">
+                  <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-emerald-500 shrink-0" /> <span><strong>50 Memory Credits</strong> included</span></li>
+                  <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-emerald-500 shrink-0" /> <span>Standard MCP Connection (Cursor, Claude)</span></li>
+                  <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-emerald-500 shrink-0" /> <span>Local SQLite & LanceDB storage</span></li>
+                  <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-emerald-500 shrink-0" /> <span>Access to Dashboard UI</span></li>
+                </ul>
+              </div>
 
-              <a
-                href="https://github.com/karanarora-aideveloper/contextsync"
-                target="_blank"
-                rel="noreferrer"
-                className="w-full block text-center py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-medium transition-colors"
+              <Link
+                href="/signup"
+                className="mt-8 w-full block text-center py-4 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold transition-colors"
               >
-                View on GitHub
-              </a>
+                Get Started Free
+              </Link>
             </div>
 
             {/* Pro Tier */}
-            <div className="p-8 rounded-3xl bg-gradient-to-b from-indigo-50/70 via-white to-slate-50 dark:from-indigo-950/60 dark:to-slate-900/90 border-2 border-indigo-500/60 shadow-xl space-y-6 relative">
-              <div className="absolute -top-3 right-8 px-3 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs font-bold uppercase tracking-wider shadow">
-                Most Popular
+            <div className="p-10 rounded-[2.5rem] bg-slate-900 dark:bg-slate-900 border border-slate-800 dark:border-slate-700 shadow-2xl relative flex flex-col text-white">
+              {/* Glow effect */}
+              <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-indigo-500/20 to-purple-600/20 pointer-events-none" />
+              <div className="absolute -inset-[2px] rounded-[2.5rem] bg-gradient-to-br from-indigo-500 to-purple-600 -z-10 opacity-50 blur-sm" />
+
+              <div className="relative z-10 space-y-4 mb-8">
+                <div className="flex justify-between items-center">
+                  <span className="inline-block px-4 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-500/50 text-indigo-300 text-sm font-bold">Pro</span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-indigo-400">Most Popular</span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-5xl font-extrabold text-white">$9</span>
+                  <span className="text-slate-400 font-medium">/ month</span>
+                </div>
+                <p className="text-slate-300">For serious engineers who work across multiple machines and want unlimited memory.</p>
               </div>
 
-              <div className="space-y-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">ContextSync Pro</span>
-                <div className="text-4xl font-extrabold text-slate-900 dark:text-white">$9 <span className="text-sm font-normal text-slate-500 dark:text-slate-400">/ month</span></div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Or $89/year (2 months free). Sync across all your machines.</p>
+              <div className="relative z-10 flex-1 space-y-6">
+                <ul className="space-y-4 text-slate-200">
+                  <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-indigo-400 shrink-0" /> <span><strong>Unlimited Memory Credits</strong></span></li>
+                  <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-indigo-400 shrink-0" /> <span><strong>AI Engine Costs Included</strong> (DeepSeek)</span></li>
+                  <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-indigo-400 shrink-0" /> <span><strong>Cross-Device Sync</strong> (Mac, PC, Laptop)</span></li>
+                  <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-indigo-400 shrink-0" /> <span>Interactive 2D Force-Graph Brain Map</span></li>
+                  <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-indigo-400 shrink-0" /> <span>Priority Support</span></li>
+                </ul>
               </div>
-
-              <ul className="space-y-3 text-sm text-slate-700 dark:text-slate-200">
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" /> Everything in Developer</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" /> <strong>Cross-Device Sync</strong> (Work Mac + PC + Laptop)</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" /> <strong>Web Dashboard & Visual Mindmap</strong></li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" /> Managed Cloud Endpoints & Automatic Backups</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" /> Team Knowledge Sharing (Up to 3 members)</li>
-              </ul>
 
               <Link
-                href="/dashboard"
-                className="w-full block text-center py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold transition-all shadow-md shadow-indigo-500/25"
+                href="/signup"
+                className="relative z-10 mt-8 w-full block text-center py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold transition-all shadow-lg shadow-indigo-500/25"
               >
-                Start with Pro
+                Upgrade to Pro
               </Link>
             </div>
           </div>
@@ -242,15 +230,19 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-slate-200 dark:border-slate-900 text-center text-sm text-slate-500">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <footer className="py-12 px-6 border-t border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 text-center text-sm text-slate-500">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <Brain className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
+            <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center">
+               <img src="/logo.jpg" alt="Logo" className="h-full w-full object-cover opacity-80 grayscale" />
+            </div>
             <span className="font-semibold text-slate-800 dark:text-slate-300">ContextSync</span> &copy; 2026. All rights reserved.
           </div>
-          <div className="flex gap-6">
-            <a href="https://github.com/karanarora-aideveloper/contextsync" className="hover:text-slate-900 dark:hover:text-slate-300">GitHub</a>
-            <Link href="/dashboard" className="hover:text-slate-900 dark:hover:text-slate-300">Dashboard</Link>
+          <div className="flex gap-8 font-medium">
+            <a href="#features" className="hover:text-slate-900 dark:hover:text-slate-300 transition-colors">Features</a>
+            <a href="#pricing" className="hover:text-slate-900 dark:hover:text-slate-300 transition-colors">Pricing</a>
+            <a href="https://github.com/karanarora-aideveloper/contextsync" className="hover:text-slate-900 dark:hover:text-slate-300 transition-colors">GitHub</a>
+            <Link href="/dashboard" className="hover:text-slate-900 dark:hover:text-slate-300 transition-colors">Dashboard</Link>
           </div>
         </div>
       </footer>
