@@ -39,7 +39,7 @@ def get_target_config_path(client: str) -> Path:
     if client == "cursor":
         return home / ".cursor" / "mcp.json"
     elif client in ["antigravity", "google-antigravity"]:
-        return home / ".gemini" / "antigravity" / "mcp_servers.json"
+        return home / ".gemini" / "config" / "mcp_config.json"
     elif client in ["claude", "claude-desktop", "claudedesktop"]:
         if sys.platform == "darwin":
             return home / "Library" / "Application Support" / "Claude" / "claude_desktop_config.json"
