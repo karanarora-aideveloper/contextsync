@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+
+const ForceGraph = dynamic(() => import("../components/ForceGraph"), { ssr: false });
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { 
@@ -901,34 +904,12 @@ print(res.formatted_context)`
                 <span className="text-xs font-mono text-slate-500">{graphData.nodes.length} topics · {graphData.links.length} links</span>
               </div>
 
-              <div className="min-h-[350px] rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 p-6 flex flex-wrap items-center justify-center gap-6 relative overflow-hidden">
-                {graphData.nodes.length === 0 ? (
-                  <div className="text-center text-slate-500 text-sm">No topics learned yet. Teach your AI a rule to build its map.</div>
-                ) : (
-                  graphData.nodes.map((node, idx) => {
-                    const isSelected = selectedNode?.id === node.id;
-                    return (
-                      <button
-                        key={`${node.id}-${idx}`}
-                        onClick={() => setSelectedNode(node)}
-                        className={`p-4 rounded-2xl transition-all text-left flex flex-col gap-1.5 shadow-md ${
-                          isSelected
-                            ? "bg-indigo-600 text-white scale-105 ring-4 ring-indigo-500/30"
-                            : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500/60 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="h-2 w-2 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-                          <span className="font-bold text-sm">{node.id}</span>
-                        </div>
-                        <span className="text-xs opacity-75 font-mono">{node.type}</span>
-                        {node.description && (
-                          <span className="text-[11px] opacity-60 line-clamp-1">{node.description}</span>
-                        )}
-                      </button>
-                    );
-                  })
-                )}
+              <div className="min-h-[500px] rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 flex items-center justify-center relative overflow-hidden">
+                <ForceGraph 
+                  graphData={graphData} 
+                  onNodeClick={(node) => setSelectedNode(node)} 
+                  theme={theme} 
+                />
               </div>
 
               {selectedNode && (
@@ -1094,29 +1075,41 @@ print(res.formatted_context)`
               </h3>
               
               <form onSubmit={handleUpgrade} className="space-y-4">
-                <div className="space-y-3">
-                  <label className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selectedPlan === 'free' ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                <div className="space-y-4">
+                  <label className={`flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedPlan === 'free' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-800'}`}>
                     <input type="radio" name="plan" value="free" checked={selectedPlan === 'free'} onChange={() => setSelectedPlan('free')} className="mt-1" />
-                    <div>
-                      <div className="font-semibold text-sm">Free Tier</div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400">Up to 50 memories. Best for testing.</div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <div className="font-bold text-slate-900 dark:text-white">Free Tier</div>
+                        <div className="text-sm font-semibold text-slate-500">$0/mo</div>
+                      </div>
+                      <ul className="text-xs text-slate-600 dark:text-slate-400 space-y-1.5 mt-2">
+                        <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-slate-400"/> <span className="font-medium text-slate-700 dark:text-slate-300">50 Credits</span> included</li>
+                        <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-slate-400"/> Standard features</li>
+                      </ul>
                     </div>
                   </label>
 
-                  <label className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selectedPlan === 'byok' ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                  <label className={`flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedPlan === 'byok' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-800'}`}>
                     <input type="radio" name="plan" value="byok" checked={selectedPlan === 'byok'} onChange={() => setSelectedPlan('byok')} className="mt-1" />
                     <div className="flex-1">
-                      <div className="font-semibold text-sm">Bring Your Own Key</div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400">Unlimited memories. Provide your own LLM API key.</div>
+                      <div className="flex justify-between items-center mb-1">
+                        <div className="font-bold text-slate-900 dark:text-white">Bring Your Own Key</div>
+                        <div className="text-sm font-semibold text-slate-500">Your LLM Costs</div>
+                      </div>
+                      <ul className="text-xs text-slate-600 dark:text-slate-400 space-y-1.5 mt-2">
+                        <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-emerald-500"/> <span className="font-medium text-slate-700 dark:text-slate-300">Unlimited Credits</span> (Memories)</li>
+                        <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-emerald-500"/> Provide your own LLM API Key</li>
+                      </ul>
                       
                       {selectedPlan === 'byok' && (
-                        <div className="mt-3">
+                        <div className="mt-4">
                           <input 
                             type="password" 
-                            placeholder="Enter your LLM API Key"
+                            placeholder="Enter your API Key (e.g., sk-...)"
                             value={llmKey}
                             onChange={(e) => setLlmKey(e.target.value)}
-                            className={`w-full rounded-lg text-sm px-3 py-2 border focus:outline-none focus:border-indigo-500 ${theme === 'light' ? 'border-slate-300 bg-white' : 'border-slate-600 bg-slate-800'}`}
+                            className={`w-full rounded-lg text-sm px-4 py-2.5 border focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${theme === 'light' ? 'border-slate-300 bg-white' : 'border-slate-600 bg-slate-800'}`}
                             required
                           />
                         </div>
@@ -1124,11 +1117,21 @@ print(res.formatted_context)`
                     </div>
                   </label>
 
-                  <label className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selectedPlan === 'pro' ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                  <label className={`flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedPlan === 'pro' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-800'}`}>
                     <input type="radio" name="plan" value="pro" checked={selectedPlan === 'pro'} onChange={() => setSelectedPlan('pro')} className="mt-1" />
-                    <div>
-                      <div className="font-semibold text-sm">Pro Plan ($9/mo)</div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400">Everything unlimited. We provide the intelligence.</div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                          All Included Pro
+                          <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                        </div>
+                        <div className="text-sm font-bold text-indigo-600 dark:text-indigo-400">$9/mo</div>
+                      </div>
+                      <ul className="text-xs text-slate-600 dark:text-slate-400 space-y-1.5 mt-2">
+                        <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-indigo-500"/> <span className="font-medium text-slate-700 dark:text-slate-300">Unlimited Credits</span> (Memories)</li>
+                        <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-indigo-500"/> We provide the Intelligence & Keys</li>
+                        <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-indigo-500"/> Priority Support</li>
+                      </ul>
                     </div>
                   </label>
                 </div>
