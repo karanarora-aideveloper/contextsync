@@ -83,14 +83,58 @@ def install_mcp_config(client: str) -> Tuple[bool, str, Path]:
 
     return True, f"Successfully injected contextsync into {client.capitalize()}", config_path
 
+import subprocess
+import os
+
+def check_live_process_tree_for_connector(connector_id: str) -> bool:
+    """Check OS process tree to see if the MCP server is actively running under the given IDE."""
+    try:
+        if sys.platform == "win32":
+            return False # Fallback to config check on Windows for now
+            
+        output = subprocess.check_output(["pgrep", "-f", "contextsync.*mcp"]).decode("utf-8").strip()
+        pids = [pid for pid in output.split('\n') if pid]
+        
+        target_keywords = {
+            "antigravity": ["antigravity", "Antigravity.app"],
+            "cursor": ["cursor", "Cursor.app"],
+            "claudedesktop": ["Claude.app", "claude desktop"],
+            "claudecode": ["claude"],
+            "windsurf": ["windsurf", "Windsurf.app"],
+            "cline": ["Code Helper", "VS Code", "cursor"], # Cline runs in VS Code/Cursor extension host
+            "continue": ["Code Helper", "VS Code", "cursor"]
+        }.get(connector_id, [connector_id])
+        
+        for pid in pids:
+            current_pid = pid
+            depth = 0
+            while depth < 4 and current_pid and current_pid != "1":
+                try:
+                    cmd = subprocess.check_output(["ps", "-o", "command=", "-p", current_pid]).decode("utf-8").strip().lower()
+                    if any(kw.lower() in cmd for kw in target_keywords):
+                        return True
+                    current_pid = subprocess.check_output(["ps", "-o", "ppid=", "-p", current_pid]).decode("utf-8").strip()
+                    depth += 1
+                except Exception:
+                    break
+                    
+        return False
+    except Exception:
+        return False
+
 def verify_mcp_config(client: str) -> bool:
-    """Check if the contextsync MCP server is present in the client's config file."""
+    """Check if the contextsync MCP server is actively running, or present in config."""
+    # 1. ACTUAL LIVE CONNECTION VERIFICATION (Process Tree)
+    if check_live_process_tree_for_connector(client):
+        return True
+        
+    # 2. Fallback to Config Check (if process isn't running right this second)
     try:
         if client == "python_sdk" or client == "claudecode":
-            # These are CLI/Library based, we can't easily verify a global JSON config
             return True 
             
         config_path = get_target_config_path(client)
+
         if not config_path.exists():
             return False
             

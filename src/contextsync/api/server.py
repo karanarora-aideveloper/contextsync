@@ -187,14 +187,21 @@ async def test_connector(
     stats = engine.stats(user_id=user["id"])
     latency_ms = round((time.time() - start_time) * 1000, 2)
     
-    # Check if actually configured on the filesystem
+    from contextsync.installer import check_live_process_tree_for_connector
+    
+    # 1. Check for ACTUAL live process connection
+    is_live = check_live_process_tree_for_connector(req.connector_id)
+    
+    # 2. Fallback to config check
     is_configured = verify_mcp_config(req.connector_id)
     
-    if not is_configured:
+    if not is_configured and not is_live:
         raise HTTPException(
             status_code=400,
-            detail=f"Configuration for {req.connector_id} not detected. Please follow the setup instructions first."
+            detail=f"Connection failed. {req.connector_id.capitalize()} is not running the ContextSync MCP server, and no valid config was found."
         )
+
+    message = f"Live Connection Verified! ContextSync is actively running in {req.connector_id.capitalize()}." if is_live else f"Config Verified! {req.connector_id.capitalize()} is configured but not currently active."
 
     return {
         "status": "connected",
@@ -206,5 +213,5 @@ async def test_connector(
         "rules_count": stats["total_memories"],
         "topics_count": stats["entities"],
         "links_count": stats["relations"],
-        "message": f"Verified! ContextSync detected in {req.connector_id.capitalize()} config."
+        "message": message
     }
