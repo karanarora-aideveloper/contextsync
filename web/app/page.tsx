@@ -54,7 +54,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto text-center relative z-10 space-y-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-sm font-semibold shadow-sm mx-auto">
             <Sparkles className="h-4 w-4" />
-            <span>Now Powered by DeepSeek for Flawless Entity Extraction</span>
+            <span>Now Powered by Advanced AI for Flawless Entity Extraction</span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
@@ -121,9 +121,9 @@ export default function Home() {
               <div className="h-14 w-14 rounded-2xl bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <Cpu className="h-7 w-7" />
               </div>
-              <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-3">DeepSeek AI Engine</h4>
+              <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Advanced AI Engine</h4>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                Uses advanced DeepSeek inference to parse your unstructured rules and automatically extract highly structured JSON entities and conceptual relationships.
+                Uses advanced AI inference to parse your unstructured rules and automatically extract highly structured JSON entities and conceptual relationships.
               </p>
             </div>
 
@@ -211,7 +211,7 @@ export default function Home() {
               <div className="relative z-10 flex-1 space-y-6">
                 <ul className="space-y-4 text-slate-200">
                   <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-indigo-400 shrink-0" /> <span><strong>Unlimited Memory Credits</strong></span></li>
-                  <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-indigo-400 shrink-0" /> <span><strong>AI Engine Costs Included</strong> (DeepSeek)</span></li>
+                  <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-indigo-400 shrink-0" /> <span><strong>AI Engine Costs Included</strong></span></li>
                   <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-indigo-400 shrink-0" /> <span><strong>Cross-Device Sync</strong> (Mac, PC, Laptop)</span></li>
                   <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-indigo-400 shrink-0" /> <span>Interactive 2D Force-Graph Brain Map</span></li>
                   <li className="flex items-start gap-3"><CheckCircle2 className="h-6 w-6 text-indigo-400 shrink-0" /> <span>Priority Support</span></li>
