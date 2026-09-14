@@ -477,12 +477,12 @@ print(res.formatted_context)`
 
           <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div className="space-y-1">
-              <span className="text-xs uppercase font-medium text-slate-500 dark:text-slate-400">Connected Tools</span>
-              <div className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">{connectors.length}</div>
-              <span className="text-xs text-slate-500">Supported AI Connectors</span>
+              <span className="text-xs uppercase font-medium text-slate-500 dark:text-slate-400">Graph Relations</span>
+              <div className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">{stats.relations}</div>
+              <span className="text-xs text-slate-500">Multi-Hop Connections</span>
             </div>
             <div className="h-12 w-12 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-              <Plug className="h-6 w-6" />
+              <Share2 className="h-6 w-6" />
             </div>
           </div>
         </div>
@@ -498,8 +498,8 @@ print(res.formatted_context)`
             }`}
           >
             <Plug className="h-4 w-4" />
-            <span>Connectors Hub ({connectors.length})</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 font-mono">NEW</span>
+            <span>Connect Assistants</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 font-mono">Setup</span>
           </button>
           <button
             onClick={() => setActiveTab("graph")}
