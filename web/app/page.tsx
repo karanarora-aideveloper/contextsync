@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Terminal, Brain, Cpu, Database, ArrowRight, CheckCircle2, ShieldCheck, Zap, Layers, Sparkles } from "lucide-react";
+import ThemeToggle from "../components/ThemeToggle";
 
 function GithubIcon({ className }: { className?: string }) {
   return (
@@ -11,41 +12,42 @@ function GithubIcon({ className }: { className?: string }) {
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
+    <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-indigo-500 selection:text-white transition-colors duration-200">
       {/* Navigation */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800/80 px-6 py-4">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-slate-950/80 border-b border-slate-200 dark:border-slate-800/80 px-6 py-4 transition-colors duration-200">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
               <Brain className="h-5 w-5 text-white" />
             </div>
-            <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+            <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">
               ContextSync
             </span>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
               contextsync.dev
             </span>
           </div>
 
-          <nav className="flex items-center gap-6 text-sm">
-            <Link href="#features" className="text-slate-400 hover:text-white transition-colors hidden sm:block">
+          <nav className="flex items-center gap-5 text-sm">
+            <Link href="#features" className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors hidden sm:block">
               Features
             </Link>
-            <Link href="#pricing" className="text-slate-400 hover:text-white transition-colors hidden sm:block">
+            <Link href="#pricing" className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors hidden sm:block">
               Pricing
             </Link>
             <a
               href="https://github.com/karanarora-aideveloper/contextsync"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+              className="flex items-center gap-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
             >
               <GithubIcon className="h-4 w-4" />
               <span className="hidden sm:inline">GitHub</span>
             </a>
+            <ThemeToggle />
             <Link
               href="/login"
-              className="text-slate-300 hover:text-white font-medium transition-colors"
+              className="text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white font-medium transition-colors"
             >
               Sign In
             </Link>
@@ -57,7 +59,6 @@ export default function HomePage() {
               <ArrowRight className="h-4 w-4" />
             </Link>
           </nav>
-
         </div>
       </header>
 
@@ -69,25 +70,25 @@ export default function HomePage() {
         </div>
 
         <div className="max-w-5xl mx-auto text-center space-y-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300">
-            <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 shadow-sm">
+            <Sparkles className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
             <span>Open-Core AI Memory Engine with Hybrid Knowledge Graph & Vector Search</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight md:leading-none">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight md:leading-none text-slate-900 dark:text-white">
             Never Re-Explain Your Code <br />
-            <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
               To Your AI Again.
             </span>
           </h1>
 
-          <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
             Stop repeating architecture decisions, conventions, and database schemas. ContextSync creates an interconnected 
             neural Knowledge Graph that Cursor, Claude Code, and Windsurf recall seamlessly.
           </p>
 
           {/* 1-Click Terminal Command */}
-          <div className="max-w-2xl mx-auto p-4 rounded-2xl bg-slate-900/90 border border-slate-800 text-left shadow-2xl shadow-indigo-950/50">
+          <div className="max-w-2xl mx-auto p-4 rounded-2xl bg-slate-950 border border-slate-800 text-left shadow-2xl">
             <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800/80 text-xs text-slate-400">
               <div className="flex items-center gap-2">
                 <span className="h-3 w-3 rounded-full bg-rose-500/80" />
@@ -97,7 +98,7 @@ export default function HomePage() {
               </div>
               <span className="text-indigo-400 font-mono">Terminal</span>
             </div>
-            <code className="text-sm font-mono text-indigo-300 block select-all">
+            <code className="text-sm font-mono text-emerald-400 block select-all">
               uvx --from git+https://github.com/karanarora-aideveloper/contextsync contextsync install-mcp cursor
             </code>
           </div>
@@ -105,7 +106,7 @@ export default function HomePage() {
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <Link
               href="/dashboard"
-              className="px-6 py-3.5 rounded-xl bg-white text-slate-950 font-semibold hover:bg-slate-200 transition-all shadow-lg flex items-center gap-2"
+              className="px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all shadow-lg shadow-indigo-500/25 flex items-center gap-2"
             >
               <span>Launch Live Dashboard</span>
               <ArrowRight className="h-4 w-4" />
@@ -114,7 +115,7 @@ export default function HomePage() {
               href="https://github.com/karanarora-aideveloper/contextsync"
               target="_blank"
               rel="noreferrer"
-              className="px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-medium transition-all flex items-center gap-2"
+              className="px-6 py-3.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 font-medium transition-all shadow-sm flex items-center gap-2"
             >
               <GithubIcon className="h-5 w-5" />
               <span>Star on GitHub</span>
@@ -124,43 +125,43 @@ export default function HomePage() {
       </section>
 
       {/* Tri-Store Architecture Section */}
-      <section id="features" className="py-20 px-6 border-t border-slate-900 bg-slate-950/60">
+      <section id="features" className="py-20 px-6 border-t border-slate-200 dark:border-slate-900 bg-slate-100/50 dark:bg-slate-950/60">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-indigo-400">Under The Hood</h2>
-            <h3 className="text-3xl md:text-4xl font-bold tracking-tight">The Hybrid Tri-Store Architecture</h3>
-            <p className="text-slate-400">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Under The Hood</h2>
+            <h3 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">The Hybrid Tri-Store Architecture</h3>
+            <p className="text-slate-600 dark:text-slate-400">
               Unlike dumb RAG chunking, ContextSync mimics the human brain by fusing vector embeddings with relational graph memory.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-indigo-500/50 transition-all space-y-4">
-              <div className="h-12 w-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/80 hover:border-indigo-400 dark:hover:border-indigo-500/50 transition-all shadow-sm space-y-4">
+              <div className="h-12 w-12 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
                 <Database className="h-6 w-6" />
               </div>
-              <h4 className="text-xl font-semibold">Embedded LanceDB Vectors</h4>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <h4 className="text-xl font-semibold text-slate-900 dark:text-white">Embedded LanceDB Vectors</h4>
+              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                 Blazing fast, zero-server vector similarity search. Text embeddings are indexed instantly on disk with zero external database dependencies.
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-purple-500/50 transition-all space-y-4">
-              <div className="h-12 w-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/80 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all shadow-sm space-y-4">
+              <div className="h-12 w-12 rounded-xl bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400">
                 <Layers className="h-6 w-6" />
               </div>
-              <h4 className="text-xl font-semibold">SQLite Knowledge Graph</h4>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <h4 className="text-xl font-semibold text-slate-900 dark:text-white">SQLite Knowledge Graph</h4>
+              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                 Extracts entities and relationships into an interconnected web. Your AI can follow multi-hop connections across different services.
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-pink-500/50 transition-all space-y-4">
-              <div className="h-12 w-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400">
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/80 hover:border-pink-400 dark:hover:border-pink-500/50 transition-all shadow-sm space-y-4">
+              <div className="h-12 w-12 rounded-xl bg-pink-50 dark:bg-pink-500/10 border border-pink-200 dark:border-pink-500/20 flex items-center justify-center text-pink-600 dark:text-pink-400">
                 <Zap className="h-6 w-6" />
               </div>
-              <h4 className="text-xl font-semibold">Gemini 2.0 Flash Extraction</h4>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <h4 className="text-xl font-semibold text-slate-900 dark:text-white">Gemini 2.0 Flash Extraction</h4>
+              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                 Powered by Google Gemini 2.0 Flash for structured JSON entity extraction in milliseconds at less than a fraction of a cent per memory.
               </p>
             </div>
@@ -169,60 +170,60 @@ export default function HomePage() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-6 border-t border-slate-900">
+      <section id="pricing" className="py-20 px-6 border-t border-slate-200 dark:border-slate-900">
         <div className="max-w-5xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-indigo-400">Simple & Transparent</h2>
-            <h3 className="text-3xl md:text-4xl font-bold tracking-tight">Fair Pricing for Serious Builders</h3>
-            <p className="text-slate-400">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Simple & Transparent</h2>
+            <h3 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">Fair Pricing for Serious Builders</h3>
+            <p className="text-slate-600 dark:text-slate-400">
               Run it 100% locally for free, or unlock seamless cross-device cloud synchronization.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Free Tier */}
-            <div className="p-8 rounded-3xl bg-slate-900/60 border border-slate-800 space-y-6">
+            <div className="p-8 rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
               <div className="space-y-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Developer</span>
-                <div className="text-4xl font-extrabold">$0 <span className="text-sm font-normal text-slate-500">/ forever</span></div>
-                <p className="text-sm text-slate-400">For solo developers running everything locally on their laptop.</p>
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Developer</span>
+                <div className="text-4xl font-extrabold text-slate-900 dark:text-white">$0 <span className="text-sm font-normal text-slate-500">/ forever</span></div>
+                <p className="text-sm text-slate-600 dark:text-slate-400">For solo developers running everything locally on their laptop.</p>
               </div>
 
-              <ul className="space-y-3 text-sm text-slate-300">
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-400" /> 100% Local Open-Source Core</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-400" /> Embedded LanceDB + SQLite</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-400" /> Standard MCP for Cursor & Claude</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-400" /> Offline Heuristic Mode</li>
+              <ul className="space-y-3 text-sm text-slate-700 dark:text-slate-300">
+                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> 100% Local Open-Source Core</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Embedded LanceDB + SQLite</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Standard MCP for Cursor & Claude</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Offline Heuristic Mode</li>
               </ul>
 
               <a
                 href="https://github.com/karanarora-aideveloper/contextsync"
                 target="_blank"
                 rel="noreferrer"
-                className="w-full block text-center py-3 rounded-xl bg-slate-800 hover:bg-slate-700 font-medium transition-colors"
+                className="w-full block text-center py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-medium transition-colors"
               >
                 View on GitHub
               </a>
             </div>
 
             {/* Pro Tier */}
-            <div className="p-8 rounded-3xl bg-gradient-to-b from-indigo-950/60 to-slate-900/90 border-2 border-indigo-500/60 shadow-xl shadow-indigo-950/40 space-y-6 relative">
+            <div className="p-8 rounded-3xl bg-gradient-to-b from-indigo-50/70 via-white to-slate-50 dark:from-indigo-950/60 dark:to-slate-900/90 border-2 border-indigo-500/60 shadow-xl space-y-6 relative">
               <div className="absolute -top-3 right-8 px-3 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs font-bold uppercase tracking-wider shadow">
                 Most Popular
               </div>
 
               <div className="space-y-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">ContextSync Pro</span>
-                <div className="text-4xl font-extrabold">$9 <span className="text-sm font-normal text-slate-400">/ month</span></div>
-                <p className="text-sm text-slate-400">Or $89/year (2 months free). Sync across all your machines.</p>
+                <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">ContextSync Pro</span>
+                <div className="text-4xl font-extrabold text-slate-900 dark:text-white">$9 <span className="text-sm font-normal text-slate-500 dark:text-slate-400">/ month</span></div>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Or $89/year (2 months free). Sync across all your machines.</p>
               </div>
 
-              <ul className="space-y-3 text-sm text-slate-200">
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-400" /> Everything in Developer</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-400" /> **Cross-Device Sync** (Work Mac + PC + Laptop)</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-400" /> **Web Dashboard & Visual Mindmap**</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-400" /> Managed Cloud Endpoints & Automatic Backups</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-400" /> Team Knowledge Sharing (Up to 3 members)</li>
+              <ul className="space-y-3 text-sm text-slate-700 dark:text-slate-200">
+                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" /> Everything in Developer</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" /> <strong>Cross-Device Sync</strong> (Work Mac + PC + Laptop)</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" /> <strong>Web Dashboard & Visual Mindmap</strong></li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" /> Managed Cloud Endpoints & Automatic Backups</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" /> Team Knowledge Sharing (Up to 3 members)</li>
               </ul>
 
               <Link
@@ -237,15 +238,15 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-slate-900 text-center text-sm text-slate-500">
+      <footer className="py-8 px-6 border-t border-slate-200 dark:border-slate-900 text-center text-sm text-slate-500">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <Brain className="h-4 w-4 text-indigo-400" />
-            <span className="font-semibold text-slate-300">ContextSync</span> &copy; 2026. All rights reserved.
+            <Brain className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
+            <span className="font-semibold text-slate-800 dark:text-slate-300">ContextSync</span> &copy; 2026. All rights reserved.
           </div>
           <div className="flex gap-6">
-            <a href="https://github.com/karanarora-aideveloper/contextsync" className="hover:text-slate-300">GitHub</a>
-            <Link href="/dashboard" className="hover:text-slate-300">Dashboard</Link>
+            <a href="https://github.com/karanarora-aideveloper/contextsync" className="hover:text-slate-900 dark:hover:text-slate-300">GitHub</a>
+            <Link href="/dashboard" className="hover:text-slate-900 dark:hover:text-slate-300">Dashboard</Link>
           </div>
         </div>
       </footer>

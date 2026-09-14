@@ -21,12 +21,12 @@ import {
   LogOut, 
   ShieldCheck, 
   Plug, 
-  Terminal, 
-  Code2, 
-  Cpu,
-  Layers,
-  Laptop
+  Terminal,
+  Code2
 } from "lucide-react";
+import { useTheme } from "../../components/ThemeContext";
+import ThemeToggle from "../../components/ThemeToggle";
+
 
 interface Memory {
   id: string;
@@ -60,7 +60,9 @@ const API_BASE = "http://127.0.0.1:8000";
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState<"graph" | "memories" | "recall" | "connectors">("graph");
+
   const [stats, setStats] = useState({ total_memories: 0, entities: 0, relations: 0 });
   const [memories, setMemories] = useState<Memory[]>([]);
   const [graphData, setGraphData] = useState<{ nodes: GraphNode[]; links: GraphLink[] }>({ nodes: [], links: [] });
@@ -369,12 +371,18 @@ print(res.formatted_context)`
   const currentConnectorData = connectors.find(c => c.id === selectedConnector) || connectors[0];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
+    <div className={`min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white transition-colors duration-200 ${
+      theme === "light" ? "bg-slate-50 text-slate-900" : "bg-slate-950 text-slate-100"
+    }`}>
       {/* Header */}
-      <header className="border-b border-slate-800/80 bg-slate-900/50 backdrop-blur-md px-6 py-4 sticky top-0 z-40">
+      <header className={`border-b px-6 py-4 sticky top-0 z-40 backdrop-blur-md transition-colors duration-200 ${
+        theme === "light" ? "bg-white/80 border-slate-200" : "bg-slate-900/50 border-slate-800/80"
+      }`}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mr-2">
+            <Link href="/" className={`flex items-center gap-2 transition-colors mr-2 ${
+              theme === "light" ? "text-slate-500 hover:text-slate-900" : "text-slate-400 hover:text-white"
+            }`}>
               <ArrowLeft className="h-4 w-4" />
             </Link>
             <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow">
@@ -383,7 +391,7 @@ print(res.formatted_context)`
             <div>
               <span className="font-bold tracking-tight">ContextSync Hub</span>
               {user && (
-                <span className="ml-2 text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                <span className="ml-2 text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
                   {user.email}
                 </span>
               )}
@@ -392,7 +400,9 @@ print(res.formatted_context)`
 
           <div className="flex items-center gap-3">
             {/* Plan Badge */}
-            <span className="text-xs px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 flex items-center gap-1.5 font-medium">
+            <span className={`text-xs px-2.5 py-1 rounded-full border flex items-center gap-1.5 font-medium ${
+              theme === "light" ? "bg-slate-100 border-slate-200 text-slate-700" : "bg-slate-800 border-slate-700 text-slate-300"
+            }`}>
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
               <span>{user?.plan === 'pro' ? 'Pro Plan ($9/mo)' : 'Free Tier (50 Max)'}</span>
             </span>
@@ -400,12 +410,15 @@ print(res.formatted_context)`
             {/* Quick Key Copy */}
             <button
               onClick={handleCopyKey}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/20 border border-indigo-500/30 hover:bg-indigo-600/30 text-indigo-300 text-xs font-medium transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/20 border border-indigo-500/30 hover:bg-indigo-600/30 text-indigo-500 text-xs font-medium transition-colors"
               title="Copy Secret API Key"
             >
               <Key className="h-3.5 w-3.5" />
               <span>{copiedKey ? "Copied Key!" : "Copy API Key"}</span>
             </button>
+
+            {/* Theme Toggle (Light / Dark) */}
+            <ThemeToggle />
 
             {/* Refresh */}
             <button
@@ -413,7 +426,9 @@ print(res.formatted_context)`
                 const t = localStorage.getItem("ctx_token");
                 if (t) fetchUserData(t);
               }}
-              className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+              className={`p-2 rounded-lg transition-colors ${
+                theme === "light" ? "bg-slate-100 hover:bg-slate-200 text-slate-600" : "bg-slate-800 hover:bg-slate-700 text-slate-300"
+              }`}
               title="Refresh Data"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
@@ -422,7 +437,9 @@ print(res.formatted_context)`
             {/* Logout */}
             <button
               onClick={handleLogout}
-              className="p-2 rounded-lg bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 text-slate-400 transition-colors"
+              className={`p-2 rounded-lg transition-colors ${
+                theme === "light" ? "bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-500" : "bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 text-slate-400"
+              }`}
               title="Sign Out"
             >
               <LogOut className="h-4 w-4" />
@@ -431,64 +448,65 @@ print(res.formatted_context)`
         </div>
       </header>
 
+
       {/* Main Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 space-y-8">
         {/* Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div className="space-y-1">
-              <span className="text-xs uppercase font-medium text-slate-400">Total Memories</span>
-              <div className="text-3xl font-extrabold text-white">{stats.total_memories}</div>
+              <span className="text-xs uppercase font-medium text-slate-500 dark:text-slate-400">Total Memories</span>
+              <div className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.total_memories}</div>
               <span className="text-xs text-slate-500">Indexed in LanceDB</span>
             </div>
-            <div className="h-12 w-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <div className="h-12 w-12 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
               <Database className="h-6 w-6" />
             </div>
           </div>
 
-          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div className="space-y-1">
-              <span className="text-xs uppercase font-medium text-slate-400">Extracted Entities</span>
-              <div className="text-3xl font-extrabold text-purple-400">{stats.entities}</div>
+              <span className="text-xs uppercase font-medium text-slate-500 dark:text-slate-400">Extracted Entities</span>
+              <div className="text-3xl font-extrabold text-purple-600 dark:text-purple-400">{stats.entities}</div>
               <span className="text-xs text-slate-500">Entities in Knowledge Graph</span>
             </div>
-            <div className="h-12 w-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+            <div className="h-12 w-12 rounded-xl bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400">
               <Brain className="h-6 w-6" />
             </div>
           </div>
 
-          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div className="space-y-1">
-              <span className="text-xs uppercase font-medium text-slate-400">Connected Tools</span>
-              <div className="text-3xl font-extrabold text-emerald-400">{connectors.length}</div>
+              <span className="text-xs uppercase font-medium text-slate-500 dark:text-slate-400">Connected Tools</span>
+              <div className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">{connectors.length}</div>
               <span className="text-xs text-slate-500">Supported AI Connectors</span>
             </div>
-            <div className="h-12 w-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <div className="h-12 w-12 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
               <Plug className="h-6 w-6" />
             </div>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-slate-800 gap-6 text-sm font-medium">
+        <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6 text-sm font-medium">
           <button
             onClick={() => setActiveTab("connectors")}
             className={`pb-3 flex items-center gap-2 border-b-2 transition-all ${
               activeTab === "connectors"
-                ? "border-emerald-500 text-emerald-400 font-semibold"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "border-emerald-500 text-emerald-600 dark:text-emerald-400 font-semibold"
+                : "border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             <Plug className="h-4 w-4" />
             <span>Connectors Hub ({connectors.length})</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">NEW</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 font-mono">NEW</span>
           </button>
           <button
             onClick={() => setActiveTab("graph")}
             className={`pb-3 flex items-center gap-2 border-b-2 transition-all ${
               activeTab === "graph"
-                ? "border-indigo-500 text-indigo-400 font-semibold"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "border-indigo-500 text-indigo-600 dark:text-indigo-400 font-semibold"
+                : "border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             <Share2 className="h-4 w-4" />
@@ -498,8 +516,8 @@ print(res.formatted_context)`
             onClick={() => setActiveTab("memories")}
             className={`pb-3 flex items-center gap-2 border-b-2 transition-all ${
               activeTab === "memories"
-                ? "border-indigo-500 text-indigo-400 font-semibold"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "border-indigo-500 text-indigo-600 dark:text-indigo-400 font-semibold"
+                : "border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             <Database className="h-4 w-4" />
@@ -509,8 +527,8 @@ print(res.formatted_context)`
             onClick={() => setActiveTab("recall")}
             className={`pb-3 flex items-center gap-2 border-b-2 transition-all ${
               activeTab === "recall"
-                ? "border-indigo-500 text-indigo-400 font-semibold"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "border-indigo-500 text-indigo-600 dark:text-indigo-400 font-semibold"
+                : "border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             <Search className="h-4 w-4" />
@@ -521,26 +539,26 @@ print(res.formatted_context)`
         {/* TAB: UNIVERSAL CONNECTORS HUB */}
         {activeTab === "connectors" && (
           <div className="space-y-8">
-            <div className="p-6 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900/60 to-slate-900/60 border border-emerald-500/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="p-6 rounded-2xl bg-gradient-to-r from-emerald-50 via-white to-slate-50 dark:from-emerald-950/40 dark:via-slate-900/60 dark:to-slate-900/60 border border-emerald-200 dark:border-emerald-500/30 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="space-y-1">
-                <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                  <Plug className="h-5 w-5 text-emerald-400" />
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Plug className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                   <span>Universal Connectors Hub</span>
                 </h2>
-                <p className="text-xs text-slate-300">
+                <p className="text-xs text-slate-600 dark:text-slate-300">
                   Connect your personal ContextSync vault to any AI assistant in under 30 seconds.
                 </p>
               </div>
 
-              <div className="flex items-center gap-2 bg-slate-950/80 px-3.5 py-2 rounded-xl border border-slate-800">
-                <span className="text-xs text-slate-400 font-mono">Your API Key:</span>
-                <code className="text-xs font-mono text-emerald-400">{userKey.substring(0, 14)}...</code>
+              <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-950/80 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800">
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Your API Key:</span>
+                <code className="text-xs font-mono text-emerald-600 dark:text-emerald-400">{userKey.substring(0, 14)}...</code>
                 <button
                   onClick={handleCopyKey}
-                  className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 ml-1"
+                  className="p-1 rounded bg-white hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 ml-1 transition-colors border border-slate-200 dark:border-transparent"
                   title="Copy Full API Key"
                 >
-                  {copiedKey ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copiedKey ? <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                 </button>
               </div>
             </div>
@@ -548,7 +566,7 @@ print(res.formatted_context)`
             <div className="grid md:grid-cols-3 gap-8">
               {/* Connector List */}
               <div className="space-y-2.5">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block px-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block px-1">
                   Select Your Assistant:
                 </span>
                 {connectors.map((c) => {
@@ -559,17 +577,17 @@ print(res.formatted_context)`
                       onClick={() => setSelectedConnector(c.id)}
                       className={`w-full text-left p-3.5 rounded-2xl border transition-all flex items-center justify-between ${
                         isSelected
-                          ? "bg-slate-900 border-emerald-500 ring-2 ring-emerald-500/20 shadow-lg"
-                          : "bg-slate-900/40 border-slate-800 hover:border-slate-700 hover:bg-slate-900/70"
+                          ? "bg-emerald-50/70 dark:bg-slate-900 border-emerald-500 ring-2 ring-emerald-500/20 shadow-md"
+                          : "bg-white dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900/70 shadow-sm"
                       }`}
                     >
                       <div className="space-y-0.5">
-                        <div className="font-semibold text-sm text-slate-100 flex items-center gap-2">
+                        <div className="font-semibold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
                           <span>{c.name}</span>
                         </div>
-                        <span className="text-xs text-slate-400 block">{c.category}</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 block">{c.category}</span>
                       </div>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                         {c.badge}
                       </span>
                     </button>
@@ -578,35 +596,35 @@ print(res.formatted_context)`
               </div>
 
               {/* Connector Configuration Pane */}
-              <div className="md:col-span-2 p-6 rounded-2xl bg-slate-900/70 border border-slate-800 space-y-6">
-                <div className="space-y-1.5 pb-4 border-b border-slate-800">
+              <div className="md:col-span-2 p-6 rounded-2xl bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+                <div className="space-y-1.5 pb-4 border-b border-slate-200 dark:border-slate-800">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                       <span>{currentConnectorData.name}</span>
                     </h3>
-                    <span className="text-xs font-mono px-2.5 py-1 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                    <span className="text-xs font-mono px-2.5 py-1 rounded bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20 font-semibold">
                       {currentConnectorData.category}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400">{currentConnectorData.description}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">{currentConnectorData.description}</p>
                 </div>
 
                 {/* 1-Click Command Snippet */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                      <Terminal className="h-3.5 w-3.5 text-emerald-400" />
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <Terminal className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                       <span>Option A: 1-Click Terminal Command</span>
                     </span>
                     <button
                       onClick={() => copyCode(currentConnectorData.command, "cmd")}
-                      className="text-xs text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                      className="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 flex items-center gap-1 font-medium"
                     >
                       {copiedSnippet === "cmd" ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                       <span>{copiedSnippet === "cmd" ? "Copied!" : "Copy Command"}</span>
                     </button>
                   </div>
-                  <pre className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-emerald-400 overflow-x-auto select-all">
+                  <pre className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-emerald-400 overflow-x-auto select-all shadow-inner">
                     {currentConnectorData.command}
                   </pre>
                 </div>
@@ -614,19 +632,19 @@ print(res.formatted_context)`
                 {/* Manual JSON / Config Snippet */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                      <Code2 className="h-3.5 w-3.5 text-indigo-400" />
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <Code2 className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
                       <span>Option B: Configuration Snippet</span>
                     </span>
                     <button
                       onClick={() => copyCode(currentConnectorData.jsonConfig, "json")}
-                      className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+                      className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 flex items-center gap-1 font-medium"
                     >
                       {copiedSnippet === "json" ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                       <span>{copiedSnippet === "json" ? "Copied!" : "Copy Snippet"}</span>
                     </button>
                   </div>
-                  <pre className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300 overflow-x-auto leading-relaxed select-all">
+                  <pre className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300 overflow-x-auto leading-relaxed select-all shadow-inner">
                     {currentConnectorData.jsonConfig}
                   </pre>
                 </div>
@@ -638,18 +656,18 @@ print(res.formatted_context)`
         {/* Tab 1: Knowledge Graph Canvas */}
         {activeTab === "graph" && (
           <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="font-semibold text-lg">Interactive Knowledge Graph</h2>
-                  <p className="text-xs text-slate-400">
+                  <h2 className="font-semibold text-lg text-slate-900 dark:text-white">Interactive Knowledge Graph</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Click on any node to view its multi-hop connections extracted by Gemini 2.0 Flash.
                   </p>
                 </div>
                 <span className="text-xs font-mono text-slate-500">{graphData.nodes.length} nodes · {graphData.links.length} edges</span>
               </div>
 
-              <div className="min-h-[350px] rounded-xl bg-slate-950/80 border border-slate-800/80 p-6 flex flex-wrap items-center justify-center gap-6 relative overflow-hidden">
+              <div className="min-h-[350px] rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 p-6 flex flex-wrap items-center justify-center gap-6 relative overflow-hidden">
                 {graphData.nodes.length === 0 ? (
                   <div className="text-center text-slate-500 text-sm">No entities stored yet. Add a memory to populate the graph.</div>
                 ) : (
@@ -659,15 +677,14 @@ print(res.formatted_context)`
                       <button
                         key={`${node.id}-${idx}`}
                         onClick={() => setSelectedNode(node)}
-                        className={`p-4 rounded-2xl transition-all text-left flex flex-col gap-1.5 shadow-lg ${
-
+                        className={`p-4 rounded-2xl transition-all text-left flex flex-col gap-1.5 shadow-md ${
                           isSelected
                             ? "bg-indigo-600 text-white scale-105 ring-4 ring-indigo-500/30"
-                            : "bg-slate-900 border border-slate-800 hover:border-indigo-500/60 hover:bg-slate-850"
+                            : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500/60 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850"
                         }`}
                       >
                         <div className="flex items-center gap-2">
-                          <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                          <span className="h-2 w-2 rounded-full bg-emerald-500 dark:bg-emerald-400" />
                           <span className="font-bold text-sm">{node.id}</span>
                         </div>
                         <span className="text-xs opacity-75 font-mono">{node.type}</span>
@@ -681,12 +698,12 @@ print(res.formatted_context)`
               </div>
 
               {selectedNode && (
-                <div className="p-4 rounded-xl bg-indigo-950/40 border border-indigo-500/30 space-y-3">
+                <div className="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-500/30 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-sm text-indigo-300">
-                      Connections for: <strong className="text-white">{selectedNode.id}</strong> ({selectedNode.type})
+                    <span className="font-semibold text-sm text-indigo-900 dark:text-indigo-300">
+                      Connections for: <strong className="text-indigo-700 dark:text-white">{selectedNode.id}</strong> ({selectedNode.type})
                     </span>
-                    <button onClick={() => setSelectedNode(null)} className="text-xs text-slate-400 hover:text-white">
+                    <button onClick={() => setSelectedNode(null)} className="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white">
                       Close
                     </button>
                   </div>
@@ -694,10 +711,10 @@ print(res.formatted_context)`
                     {graphData.links
                       .filter(l => l.source === selectedNode.id || l.target === selectedNode.id)
                       .map((link, idx) => (
-                        <div key={idx} className="text-xs font-mono text-slate-300 flex items-center gap-2">
-                          <span className="font-bold text-indigo-400">{link.source}</span>
-                          <span className="text-slate-500">--[{link.relation}]--&gt;</span>
-                          <span className="font-bold text-purple-400">{link.target}</span>
+                        <div key={idx} className="text-xs font-mono text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                          <span className="font-bold text-indigo-600 dark:text-indigo-400">{link.source}</span>
+                          <span className="text-slate-400 dark:text-slate-500">--[{link.relation}]--&gt;</span>
+                          <span className="font-bold text-purple-600 dark:text-purple-400">{link.target}</span>
                           {link.context && <span className="text-slate-500">({link.context})</span>}
                         </div>
                       ))}
@@ -711,37 +728,37 @@ print(res.formatted_context)`
         {/* Tab 2: Memories List */}
         {activeTab === "memories" && (
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4 h-fit">
-              <h2 className="font-semibold text-base flex items-center gap-2">
-                <Plus className="h-4 w-4 text-indigo-400" />
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 h-fit">
+              <h2 className="font-semibold text-base flex items-center gap-2 text-slate-900 dark:text-white">
+                <Plus className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                 <span>Store Memory</span>
               </h2>
               <form onSubmit={handleAddMemory} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-medium">Memory Content or Rule</label>
+                  <label className="text-xs text-slate-600 dark:text-slate-400 font-medium">Memory Content or Rule</label>
                   <textarea
                     rows={4}
                     value={newContent}
                     onChange={(e) => setNewContent(e.target.value)}
                     placeholder="e.g. Always write pure functions for utility modules."
-                    className="w-full rounded-xl bg-slate-950 border border-slate-800 p-3 text-sm focus:outline-none focus:border-indigo-500"
+                    className="w-full rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500"
                     required
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-medium">Tags (comma-separated)</label>
+                  <label className="text-xs text-slate-600 dark:text-slate-400 font-medium">Tags (comma-separated)</label>
                   <input
                     type="text"
                     value={newTags}
                     onChange={(e) => setNewTags(e.target.value)}
                     placeholder="e.g. conventions, frontend, rules"
-                    className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-sm focus:outline-none focus:border-indigo-500"
+                    className="w-full rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={isAdding}
-                  className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-all disabled:opacity-50"
+                  className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-all disabled:opacity-50 shadow-sm"
                 >
                   {isAdding ? "Extracting & Storing..." : "Save to Vault"}
                 </button>
@@ -749,26 +766,26 @@ print(res.formatted_context)`
             </div>
 
             <div className="md:col-span-2 space-y-4">
-              <h2 className="font-semibold text-base text-slate-300">Saved Facts & Rules ({memories.length})</h2>
+              <h2 className="font-semibold text-base text-slate-800 dark:text-slate-300">Saved Facts & Rules ({memories.length})</h2>
               <div className="space-y-3">
                 {memories.length === 0 ? (
-                  <div className="p-8 text-center text-slate-500 bg-slate-900/40 rounded-2xl border border-slate-800">
+                  <div className="p-8 text-center text-slate-500 bg-white dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
                     No memories found. Add your first codebase rule above!
                   </div>
                 ) : (
                   memories.map((m) => (
                     <div
                       key={m.id}
-                      className="p-5 rounded-2xl bg-slate-900/50 border border-slate-800 flex items-start justify-between gap-4 hover:border-slate-700 transition-all"
+                      className="p-5 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 shadow-sm flex items-start justify-between gap-4 hover:border-slate-300 dark:hover:border-slate-700 transition-all"
                     >
                       <div className="space-y-2">
-                        <p className="text-sm text-slate-200 font-medium">{m.content}</p>
+                        <p className="text-sm text-slate-900 dark:text-slate-200 font-medium">{m.content}</p>
                         {m.summary && (
-                          <p className="text-xs text-indigo-400/90 font-mono">Summary: {m.summary}</p>
+                          <p className="text-xs text-indigo-600 dark:text-indigo-400 font-mono">Summary: {m.summary}</p>
                         )}
                         <div className="flex flex-wrap items-center gap-2 pt-1">
                           {m.tags && m.tags.map((t, idx) => (
-                            <span key={idx} className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-slate-800 text-slate-400">
+                            <span key={idx} className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-transparent">
                               <Tag className="h-3 w-3" />
                               {t}
                             </span>
@@ -781,7 +798,7 @@ print(res.formatted_context)`
                       </div>
                       <button
                         onClick={() => handleDeleteMemory(m.id)}
-                        className="text-slate-500 hover:text-rose-400 p-1.5 rounded-lg hover:bg-rose-500/10 transition-colors"
+                        className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
                         title="Delete Memory"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -797,9 +814,9 @@ print(res.formatted_context)`
         {/* Tab 3: Recall Playground */}
         {activeTab === "recall" && (
           <div className="max-w-3xl mx-auto space-y-6">
-            <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
-              <h2 className="font-semibold text-lg flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-indigo-400" />
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+              <h2 className="font-semibold text-lg flex items-center gap-2 text-slate-900 dark:text-white">
+                <Sparkles className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                 <span>Test Memory Retrieval (Hybrid Vector + Graph)</span>
               </h2>
               <form onSubmit={handleRecall} className="flex gap-3">
@@ -808,13 +825,13 @@ print(res.formatted_context)`
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Ask a question (e.g. Who maintains Apollo? What coding style do we use?)"
-                  className="flex-1 rounded-xl bg-slate-950 border border-slate-800 px-4 py-3 text-sm focus:outline-none focus:border-indigo-500"
+                  className="flex-1 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500"
                   required
                 />
                 <button
                   type="submit"
                   disabled={isSearching}
-                  className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-all disabled:opacity-50 flex items-center gap-2"
+                  className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-all disabled:opacity-50 flex items-center gap-2 shadow-sm"
                 >
                   <Search className="h-4 w-4" />
                   <span>{isSearching ? "Recalling..." : "Recall"}</span>
@@ -823,9 +840,9 @@ print(res.formatted_context)`
             </div>
 
             {recallResult && (
-              <div className="p-6 rounded-2xl bg-slate-900/80 border border-indigo-500/40 space-y-3">
-                <span className="text-xs uppercase font-bold text-indigo-400">Context Provided to AI Assistant:</span>
-                <pre className="text-xs font-mono bg-slate-950 p-4 rounded-xl text-emerald-400 whitespace-pre-wrap leading-relaxed border border-slate-800">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/80 border border-indigo-200 dark:border-indigo-500/40 shadow-sm space-y-3">
+                <span className="text-xs uppercase font-bold text-indigo-600 dark:text-indigo-400">Context Provided to AI Assistant:</span>
+                <pre className="text-xs font-mono bg-slate-950 p-4 rounded-xl text-emerald-400 whitespace-pre-wrap leading-relaxed border border-slate-800 shadow-inner select-all">
                   {recallResult.formatted_context}
                 </pre>
               </div>
