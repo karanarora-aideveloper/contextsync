@@ -203,6 +203,50 @@ class GraphStore:
             conn.commit()
             return cursor.rowcount > 0
 
+    def get_all_memories(self, limit: int = 100, offset: int = 0) -> List[Dict[str, Any]]:
+        """Fetch stored memories with pagination."""
+        with self._get_conn() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM memories ORDER BY created_at DESC LIMIT ? OFFSET ?", (limit, offset))
+            rows = cursor.fetchall()
+            res = []
+            for r in rows:
+                res.append({
+                    "id": r["id"],
+                    "content": r["content"],
+                    "summary": r["summary"],
+                    "source": r["source"],
+                    "tags": json.loads(r["tags_json"] or "[]"),
+                    "created_at": r["created_at"]
+                })
+            return res
+
+    def get_full_graph(self) -> Dict[str, Any]:
+        """Fetch all nodes and edges in the Knowledge Graph for visualization."""
+        with self._get_conn() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM entities")
+            nodes = [
+                {
+                    "id": r["name"],
+                    "type": r["entity_type"],
+                    "description": r["description"],
+                    "metadata": json.loads(r["metadata_json"] or "{}")
+                }
+                for r in cursor.fetchall()
+            ]
+            cursor.execute("SELECT source, relation, target, context FROM relations")
+            links = [
+                {
+                    "source": r["source"],
+                    "relation": r["relation"],
+                    "target": r["target"],
+                    "context": r["context"]
+                }
+                for r in cursor.fetchall()
+            ]
+            return {"nodes": nodes, "links": links}
+
     def get_stats(self) -> Dict[str, int]:
         """Return counts of memories, entities, and relations."""
         with self._get_conn() as conn:
@@ -218,3 +262,4 @@ class GraphStore:
                 "entities": ent_count,
                 "relations": rel_count
             }
+

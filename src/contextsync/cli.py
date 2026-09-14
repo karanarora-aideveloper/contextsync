@@ -103,6 +103,17 @@ def install_mcp(
     console.print("\n[bold]Done![/bold] Restart your editor, and ContextSync will be connected automatically.")
 
 @app.command()
+def serve(
+    host: str = typer.Option("127.0.0.1", "--host", "-h", help="Host to bind server"),
+    port: int = typer.Option(8000, "--port", "-p", help="Port to bind server")
+):
+    """Start the ContextSync REST API server."""
+    import uvicorn
+    console.print(f"[bold green]🚀 Starting ContextSync REST API at http://{host}:{port}...[/bold green]")
+    console.print(f"  [dim]API Docs: http://{host}:{port}/docs[/dim]")
+    uvicorn.run("contextsync.api.server:app", host=host, port=port, reload=False)
+
+@app.command()
 def mcp():
     """Start the MCP server over standard I/O (for Cursor, Claude Code, Windsurf)."""
     from contextsync.mcp_server import run_stdio
@@ -110,3 +121,4 @@ def mcp():
 
 if __name__ == "__main__":
     app()
+
