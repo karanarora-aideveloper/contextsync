@@ -1,0 +1,29 @@
+[project]
+name = "contextsync"
+version = "0.1.0"
+description = "ContextSync (contextsync.dev) - Persistent Long-Term Memory Engine for AI Coding Agents"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "google-genai>=0.1.0",
+    "lancedb>=0.17.0",
+    "mcp>=1.0.0",
+    "pydantic>=2.7.0",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "python-dotenv>=1.0.0",
+    "rich>=13.7.0",
+    "typer>=0.12.0",
+]
+
+[project.scripts]
+contextsync = "contextsync.cli:app"
+csync = "contextsync.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+asyncio_mode = "auto"
