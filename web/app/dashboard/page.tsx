@@ -653,13 +653,14 @@ print(res.formatted_context)`
                 {graphData.nodes.length === 0 ? (
                   <div className="text-center text-slate-500 text-sm">No entities stored yet. Add a memory to populate the graph.</div>
                 ) : (
-                  graphData.nodes.map((node) => {
+                  graphData.nodes.map((node, idx) => {
                     const isSelected = selectedNode?.id === node.id;
                     return (
                       <button
-                        key={node.id}
+                        key={`${node.id}-${idx}`}
                         onClick={() => setSelectedNode(node)}
                         className={`p-4 rounded-2xl transition-all text-left flex flex-col gap-1.5 shadow-lg ${
+
                           isSelected
                             ? "bg-indigo-600 text-white scale-105 ring-4 ring-indigo-500/30"
                             : "bg-slate-900 border border-slate-800 hover:border-indigo-500/60 hover:bg-slate-850"
