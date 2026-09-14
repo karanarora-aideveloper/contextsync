@@ -110,7 +110,7 @@ def get_me(user: Dict[str, Any] = Depends(get_current_user)):
 @app.get("/api/stats")
 def get_stats(user: Dict[str, Any] = Depends(get_current_user)):
     """Return memory metrics for the authenticated user."""
-    return engine.stats()
+    return engine.stats(user_id=user["id"])
 
 @app.get("/api/memories")
 def list_memories(
@@ -119,7 +119,7 @@ def list_memories(
     user: Dict[str, Any] = Depends(get_current_user)
 ):
     """List stored memories for the authenticated user."""
-    memories = engine.graph_store.get_all_memories(limit=limit, offset=offset)
+    memories = engine.graph_store.get_all_memories(limit=limit, offset=offset, user_id=user["id"])
     return {"memories": memories, "total": len(memories)}
 
 @app.post("/api/memories", status_code=status.HTTP_201_CREATED)
@@ -132,13 +132,13 @@ async def create_memory(
         raise HTTPException(status_code=400, detail="Memory content cannot be empty")
     
     # Fair-use quota check for free plan
-    if user.get("plan") == "free" and engine.stats()["total_memories"] >= 50:
+    if user.get("plan") == "free" and engine.stats(user_id=user["id"])["total_memories"] >= 50:
         raise HTTPException(
             status_code=403, 
             detail="Free plan limit of 50 memories reached. Upgrade to Pro ($9/mo) for unlimited memory."
         )
 
-    item = await engine.remember(content=req.content, tags=req.tags, source=f"user:{user['email']}")
+    item = await engine.remember(content=req.content, tags=req.tags, source=f"user:{user['email']}", user_id=user["id"])
     return {"success": True, "memory": item}
 
 @app.delete("/api/memories/{memory_id}")
@@ -147,7 +147,7 @@ def delete_memory(
     user: Dict[str, Any] = Depends(get_current_user)
 ):
     """Delete a memory."""
-    success = engine.forget(memory_id)
+    success = engine.forget(memory_id, user_id=user["id"])
     if not success:
         raise HTTPException(status_code=404, detail="Memory not found")
     return {"success": True, "deleted_id": memory_id}
@@ -158,7 +158,7 @@ async def recall_memory(
     user: Dict[str, Any] = Depends(get_current_user)
 ):
     """Search memory using hybrid vector + graph traversal."""
-    result = await engine.recall(query=req.query, limit=req.limit or 5)
+    result = await engine.recall(query=req.query, limit=req.limit or 5, user_id=user["id"])
     return {
         "query": result.query,
         "memories": result.memories,
@@ -170,4 +170,4 @@ async def recall_memory(
 @app.get("/api/graph")
 def get_graph(user: Dict[str, Any] = Depends(get_current_user)):
     """Deliver full Knowledge Graph nodes and edges for the authenticated user."""
-    return engine.graph_store.get_full_graph()
+    return engine.graph_store.get_full_graph(user_id=user["id"])

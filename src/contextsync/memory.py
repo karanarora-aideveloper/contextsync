@@ -34,7 +34,8 @@ class MemoryEngine:
         self,
         content: str,
         tags: Optional[List[str]] = None,
-        source: Optional[str] = "user"
+        source: Optional[str] = "user",
+        user_id: str = "local"
     ) -> MemoryItem:
         """Store knowledge, extract entities/relations into graph, and embed into vector space."""
         if not content or not content.strip():
@@ -45,8 +46,15 @@ class MemoryEngine:
         # 1. Extract entities, relations, and summary
         extraction = await self.extractor.extract(content)
 
+        # Apply user_id to all extracted entities and relations
+        for entity in extraction.entities:
+            entity.user_id = user_id
+        for relation in extraction.relations:
+            relation.user_id = user_id
+
         # 2. Create memory item
         item = MemoryItem(
+            user_id=user_id,
             content=content.strip(),
             summary=extraction.summary,
             tags=tags,
@@ -69,19 +77,19 @@ class MemoryEngine:
 
         return item
 
-    async def recall(self, query: str, limit: int = 5) -> RecallResult:
+    async def recall(self, query: str, limit: int = 5, user_id: str = "local") -> RecallResult:
         """Recall relevant memories using hybrid vector similarity and knowledge graph traversal."""
         if not query or not query.strip():
             return RecallResult(query=query)
 
         # 1. Vector similarity search
         query_vector = await self.embedding_engine.embed_text(query)
-        matched_memories = self.vector_store.search(query_vector, limit=limit)
+        matched_memories = self.vector_store.search(query_vector, user_id=user_id, limit=limit)
 
         # 2. Identify relevant entities from query + top memories
-        entity_candidates = self.graph_store.search_entities_by_text(query)
+        entity_candidates = self.graph_store.search_entities_by_text(query, user_id=user_id)
         for mem in matched_memories[:2]:
-            extracted_from_mem = self.graph_store.search_entities_by_text(mem.content)
+            extracted_from_mem = self.graph_store.search_entities_by_text(mem.content, user_id=user_id)
             for ent in extracted_from_mem:
                 if ent.name not in [e.name for e in entity_candidates]:
                     entity_candidates.append(ent)
@@ -89,7 +97,7 @@ class MemoryEngine:
         entity_names = [e.name for e in entity_candidates[:6]]
 
         # 3. Traverse knowledge graph around these entities
-        connected_entities, connected_relations = self.graph_store.find_connected_subgraph(entity_names)
+        connected_entities, connected_relations = self.graph_store.find_connected_subgraph(entity_names, user_id=user_id)
 
         # 4. Synthesize markdown context block for LLM consumption
         context_parts = []
@@ -120,17 +128,17 @@ class MemoryEngine:
             formatted_context=formatted_context
         )
 
-    def forget(self, memory_id: str) -> bool:
+    def forget(self, memory_id: str, user_id: str = "local") -> bool:
         """Forget a memory item by ID."""
-        vec_ok = self.vector_store.delete(memory_id)
-        graph_ok = self.graph_store.delete_memory(memory_id)
+        vec_ok = self.vector_store.delete(memory_id, user_id=user_id)
+        graph_ok = self.graph_store.delete_memory(memory_id, user_id=user_id)
         return vec_ok or graph_ok
 
-    def stats(self) -> Dict[str, Any]:
+    def stats(self, user_id: str = "local") -> Dict[str, Any]:
         """Return memory engine statistics."""
-        graph_stats = self.graph_store.get_stats()
+        graph_stats = self.graph_store.get_stats(user_id=user_id)
         return {
-            "total_memories": self.vector_store.count(),
+            "total_memories": graph_stats["memories"],
             "entities": graph_stats["entities"],
             "relations": graph_stats["relations"],
         }

@@ -1,4 +1,5 @@
 import pytest
+import uuid
 from starlette.testclient import TestClient
 from contextsync.api.server import app
 
@@ -13,12 +14,14 @@ def test_auth_and_protected_api_flow():
     unauth = client.get("/api/memories")
     assert unauth.status_code == 401
 
-    # 3. Sign up a new user
+    # 3. Sign up a new user with unique email
+    test_email = f"testdev_{uuid.uuid4().hex[:6]}@contextsync.dev"
     signup_res = client.post("/api/auth/signup", json={
-        "email": "testdev@contextsync.dev",
+        "email": test_email,
         "password": "strongpassword123"
     })
     assert signup_res.status_code == 201
+
     auth_data = signup_res.json()
     assert "token" in auth_data
     token = auth_data["token"]
@@ -29,7 +32,7 @@ def test_auth_and_protected_api_flow():
     # 4. Fetch user profile via /api/auth/me
     me_res = client.get("/api/auth/me", headers=headers)
     assert me_res.status_code == 200
-    assert me_res.json()["user"]["email"] == "testdev@contextsync.dev"
+    assert me_res.json()["user"]["email"] == test_email
 
     # 5. Add memory using Bearer token
     post_res = client.post("/api/memories", json={

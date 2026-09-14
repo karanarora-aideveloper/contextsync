@@ -38,6 +38,8 @@ def get_target_config_path(client: str) -> Path:
 
     if client == "cursor":
         return home / ".cursor" / "mcp.json"
+    elif client in ["antigravity", "google-antigravity"]:
+        return home / ".gemini" / "antigravity" / "mcp_servers.json"
     elif client in ["claude", "claude-desktop"]:
         if sys.platform == "darwin":
             return home / "Library" / "Application Support" / "Claude" / "claude_desktop_config.json"
@@ -47,8 +49,15 @@ def get_target_config_path(client: str) -> Path:
             return home / ".config" / "Claude" / "claude_desktop_config.json"
     elif client == "windsurf":
         return home / ".codeium" / "windsurf" / "mcp_config.json"
+    elif client in ["cline", "roo-code"]:
+        if sys.platform == "darwin":
+            return home / "Library" / "Application Support" / "Code" / "User" / "globalStorage" / "saoudrizwan.claude-dev" / "settings" / "cline_mcp_settings.json"
+        else:
+            return home / ".config" / "Code" / "User" / "globalStorage" / "saoudrizwan.claude-dev" / "settings" / "cline_mcp_settings.json"
+    elif client == "continue":
+        return home / ".continue" / "config.json"
     else:
-        raise ValueError(f"Unsupported client '{client}'. Supported: cursor, claude, windsurf")
+        raise ValueError(f"Unsupported client '{client}'. Supported: antigravity, cursor, claude, windsurf, cline, continue")
 
 def install_mcp_config(client: str) -> Tuple[bool, str, Path]:
     """Inject contextsync MCP server definition into target client config."""

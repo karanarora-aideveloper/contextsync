@@ -14,6 +14,7 @@ class Entity(BaseModel):
     )
     description: Optional[str] = Field(default=None, description="Short summary of what this entity is or does")
     metadata: Dict[str, Any] = Field(default_factory=dict)
+    user_id: str = Field(default="local", description="Tenant ID to isolate data")
 
 
 class Relation(BaseModel):
@@ -22,6 +23,7 @@ class Relation(BaseModel):
     relation: str = Field(description="Relationship label, e.g. 'USES', 'MANAGES', 'DEPENDS_ON', 'PREFERS'")
     target: str = Field(description="Target entity name")
     context: Optional[str] = Field(default=None, description="Context or reason for this relationship")
+    user_id: str = Field(default="local", description="Tenant ID to isolate data")
 
 
 class ExtractionResult(BaseModel):
@@ -34,6 +36,7 @@ class ExtractionResult(BaseModel):
 class MemoryItem(BaseModel):
     """A stored memory entry in the vector store and registry."""
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str = Field(default="local", description="Tenant ID to isolate data")
     content: str
     summary: Optional[str] = None
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())

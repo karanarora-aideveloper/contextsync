@@ -11,16 +11,21 @@ import {
   Trash2, 
   RefreshCw, 
   Share2, 
-  Sparkles,
-  ArrowLeft,
-  Clock,
-  Tag,
-  Key,
-  Copy,
-  Check,
-  LogOut,
-  ShieldCheck,
-  CreditCard
+  Sparkles, 
+  ArrowLeft, 
+  Clock, 
+  Tag, 
+  Key, 
+  Copy, 
+  Check, 
+  LogOut, 
+  ShieldCheck, 
+  Plug, 
+  Terminal, 
+  Code2, 
+  Cpu,
+  Layers,
+  Laptop
 } from "lucide-react";
 
 interface Memory {
@@ -55,7 +60,7 @@ const API_BASE = "http://127.0.0.1:8000";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"graph" | "memories" | "recall">("graph");
+  const [activeTab, setActiveTab] = useState<"graph" | "memories" | "recall" | "connectors">("graph");
   const [stats, setStats] = useState({ total_memories: 0, entities: 0, relations: 0 });
   const [memories, setMemories] = useState<Memory[]>([]);
   const [graphData, setGraphData] = useState<{ nodes: GraphNode[]; links: GraphLink[] }>({ nodes: [], links: [] });
@@ -63,8 +68,9 @@ export default function DashboardPage() {
   
   // User Auth State
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [showKeyModal, setShowKeyModal] = useState(false);
   const [copiedKey, setCopiedKey] = useState(false);
+  const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
+  const [selectedConnector, setSelectedConnector] = useState<string>("antigravity");
 
   // New Memory Form
   const [newContent, setNewContent] = useState("");
@@ -147,6 +153,12 @@ export default function DashboardPage() {
     }
   };
 
+  const copyCode = (code: string, id: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedSnippet(id);
+    setTimeout(() => setCopiedSnippet(null), 2000);
+  };
+
   const handleAddMemory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newContent.trim()) return;
@@ -220,6 +232,142 @@ export default function DashboardPage() {
     }
   };
 
+  const userKey = user?.api_key || "ctx_live_your_api_key_here";
+
+  // List of all connectors
+  const connectors = [
+    {
+      id: "antigravity",
+      name: "Google Antigravity",
+      category: "IDE / Autonomous Agent",
+      badge: "Official MCP",
+      description: "Google's next-gen agentic coding IDE. Connects via standard MCP server.",
+      command: `uvx --from git+https://github.com/karanarora-aideveloper/contextsync contextsync install-mcp antigravity`,
+      jsonConfig: `{
+  "mcpServers": {
+    "contextsync": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/karanarora-aideveloper/contextsync", "contextsync", "mcp"],
+      "env": {
+        "CONTEXTSYNC_API_KEY": "${userKey}"
+      }
+    }
+  }
+}`
+    },
+    {
+      id: "cursor",
+      name: "Cursor",
+      category: "AI Code Editor",
+      badge: "1-Click Ready",
+      description: "The leading AI editor. Inject rules into Cursor Composer & Chat.",
+      command: `uvx --from git+https://github.com/karanarora-aideveloper/contextsync contextsync install-mcp cursor`,
+      jsonConfig: `{
+  "mcpServers": {
+    "contextsync": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/karanarora-aideveloper/contextsync", "contextsync", "mcp"]
+    }
+  }
+}`
+    },
+    {
+      id: "claudecode",
+      name: "Claude Code CLI",
+      category: "Agentic Terminal",
+      badge: "Anthropic CLI",
+      description: "Anthropic's high-speed agentic terminal assistant.",
+      command: `claude mcp add contextsync uvx -- --from git+https://github.com/karanarora-aideveloper/contextsync contextsync mcp`,
+      jsonConfig: `// Run in terminal:\nclaude mcp add contextsync uvx -- --from git+https://github.com/karanarora-aideveloper/contextsync contextsync mcp`
+    },
+    {
+      id: "claudedesktop",
+      name: "Claude Desktop",
+      category: "Desktop Application",
+      badge: "Anthropic MCP",
+      description: "Claude's official Mac/Windows desktop client.",
+      command: `uvx --from git+https://github.com/karanarora-aideveloper/contextsync contextsync install-mcp claude`,
+      jsonConfig: `{
+  "mcpServers": {
+    "contextsync": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/karanarora-aideveloper/contextsync", "contextsync", "mcp"]
+    }
+  }
+}`
+    },
+    {
+      id: "windsurf",
+      name: "Windsurf (Codeium)",
+      category: "AI IDE",
+      badge: "Cascade Ready",
+      description: "Codeium's agentic IDE powered by the Cascade engine.",
+      command: `uvx --from git+https://github.com/karanarora-aideveloper/contextsync contextsync install-mcp windsurf`,
+      jsonConfig: `{
+  "mcpServers": {
+    "contextsync": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/karanarora-aideveloper/contextsync", "contextsync", "mcp"]
+    }
+  }
+}`
+    },
+    {
+      id: "cline",
+      name: "Cline / Roo Code",
+      category: "VS Code Extension",
+      badge: "Autonomous Agent",
+      description: "Autonomous coding agent extension inside Visual Studio Code.",
+      command: `// Add to cline_mcp_settings.json`,
+      jsonConfig: `{
+  "mcpServers": {
+    "contextsync": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/karanarora-aideveloper/contextsync", "contextsync", "mcp"]
+    }
+  }
+}`
+    },
+    {
+      id: "continue",
+      name: "Continue.dev",
+      category: "VS Code & JetBrains",
+      badge: "Multi-IDE",
+      description: "Open-source AI coding extension for VS Code and JetBrains IDEs.",
+      command: `// Add to ~/.continue/config.json`,
+      jsonConfig: `{
+  "contextProviders": [
+    {
+      "name": "mcp",
+      "params": {
+        "command": "uvx",
+        "args": ["--from", "git+https://github.com/karanarora-aideveloper/contextsync", "contextsync", "mcp"]
+      }
+    }
+  ]
+}`
+    },
+    {
+      id: "python_rest",
+      name: "Python SDK & REST API",
+      category: "Custom Agents / Frameworks",
+      badge: "LangChain / CrewAI",
+      description: "Connect LangChain, CrewAI, or any custom Python application directly.",
+      command: `pip install git+https://github.com/karanarora-aideveloper/contextsync.git`,
+      jsonConfig: `import asyncio
+from contextsync.memory import MemoryEngine
+
+engine = MemoryEngine()
+# Store
+asyncio.run(engine.remember("Always use asyncpg for PostgreSQL queries."))
+# Recall
+res = asyncio.run(engine.recall("What database driver do we use?"))
+print(res.formatted_context)`
+    }
+  ];
+
+  const currentConnectorData = connectors.find(c => c.id === selectedConnector) || connectors[0];
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
       {/* Header */}
@@ -233,7 +381,7 @@ export default function DashboardPage() {
               <Brain className="h-4 w-4 text-white" />
             </div>
             <div>
-              <span className="font-bold tracking-tight">ContextSync Console</span>
+              <span className="font-bold tracking-tight">ContextSync Hub</span>
               {user && (
                 <span className="ml-2 text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
                   {user.email}
@@ -249,13 +397,14 @@ export default function DashboardPage() {
               <span>{user?.plan === 'pro' ? 'Pro Plan ($9/mo)' : 'Free Tier (50 Max)'}</span>
             </span>
 
-            {/* Cursor API Key Modal Button */}
+            {/* Quick Key Copy */}
             <button
-              onClick={() => setShowKeyModal(true)}
+              onClick={handleCopyKey}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/20 border border-indigo-500/30 hover:bg-indigo-600/30 text-indigo-300 text-xs font-medium transition-colors"
+              title="Copy Secret API Key"
             >
               <Key className="h-3.5 w-3.5" />
-              <span>Cursor Key</span>
+              <span>{copiedKey ? "Copied Key!" : "Copy API Key"}</span>
             </button>
 
             {/* Refresh */}
@@ -290,7 +439,7 @@ export default function DashboardPage() {
             <div className="space-y-1">
               <span className="text-xs uppercase font-medium text-slate-400">Total Memories</span>
               <div className="text-3xl font-extrabold text-white">{stats.total_memories}</div>
-              <span className="text-xs text-slate-500">Indexed in your personal vault</span>
+              <span className="text-xs text-slate-500">Indexed in LanceDB</span>
             </div>
             <div className="h-12 w-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
               <Database className="h-6 w-6" />
@@ -310,12 +459,12 @@ export default function DashboardPage() {
 
           <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
             <div className="space-y-1">
-              <span className="text-xs uppercase font-medium text-slate-400">Graph Relations</span>
-              <div className="text-3xl font-extrabold text-pink-400">{stats.relations}</div>
-              <span className="text-xs text-slate-500">Directed relationship links</span>
+              <span className="text-xs uppercase font-medium text-slate-400">Connected Tools</span>
+              <div className="text-3xl font-extrabold text-emerald-400">{connectors.length}</div>
+              <span className="text-xs text-slate-500">Supported AI Connectors</span>
             </div>
-            <div className="h-12 w-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400">
-              <Share2 className="h-6 w-6" />
+            <div className="h-12 w-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <Plug className="h-6 w-6" />
             </div>
           </div>
         </div>
@@ -323,10 +472,22 @@ export default function DashboardPage() {
         {/* Tab Navigation */}
         <div className="flex border-b border-slate-800 gap-6 text-sm font-medium">
           <button
+            onClick={() => setActiveTab("connectors")}
+            className={`pb-3 flex items-center gap-2 border-b-2 transition-all ${
+              activeTab === "connectors"
+                ? "border-emerald-500 text-emerald-400 font-semibold"
+                : "border-transparent text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <Plug className="h-4 w-4" />
+            <span>Connectors Hub ({connectors.length})</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">NEW</span>
+          </button>
+          <button
             onClick={() => setActiveTab("graph")}
             className={`pb-3 flex items-center gap-2 border-b-2 transition-all ${
               activeTab === "graph"
-                ? "border-indigo-500 text-indigo-400"
+                ? "border-indigo-500 text-indigo-400 font-semibold"
                 : "border-transparent text-slate-400 hover:text-slate-200"
             }`}
           >
@@ -337,7 +498,7 @@ export default function DashboardPage() {
             onClick={() => setActiveTab("memories")}
             className={`pb-3 flex items-center gap-2 border-b-2 transition-all ${
               activeTab === "memories"
-                ? "border-indigo-500 text-indigo-400"
+                ? "border-indigo-500 text-indigo-400 font-semibold"
                 : "border-transparent text-slate-400 hover:text-slate-200"
             }`}
           >
@@ -348,7 +509,7 @@ export default function DashboardPage() {
             onClick={() => setActiveTab("recall")}
             className={`pb-3 flex items-center gap-2 border-b-2 transition-all ${
               activeTab === "recall"
-                ? "border-indigo-500 text-indigo-400"
+                ? "border-indigo-500 text-indigo-400 font-semibold"
                 : "border-transparent text-slate-400 hover:text-slate-200"
             }`}
           >
@@ -356,6 +517,123 @@ export default function DashboardPage() {
             <span>Recall Playground</span>
           </button>
         </div>
+
+        {/* TAB: UNIVERSAL CONNECTORS HUB */}
+        {activeTab === "connectors" && (
+          <div className="space-y-8">
+            <div className="p-6 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900/60 to-slate-900/60 border border-emerald-500/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                  <Plug className="h-5 w-5 text-emerald-400" />
+                  <span>Universal Connectors Hub</span>
+                </h2>
+                <p className="text-xs text-slate-300">
+                  Connect your personal ContextSync vault to any AI assistant in under 30 seconds.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 bg-slate-950/80 px-3.5 py-2 rounded-xl border border-slate-800">
+                <span className="text-xs text-slate-400 font-mono">Your API Key:</span>
+                <code className="text-xs font-mono text-emerald-400">{userKey.substring(0, 14)}...</code>
+                <button
+                  onClick={handleCopyKey}
+                  className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 ml-1"
+                  title="Copy Full API Key"
+                >
+                  {copiedKey ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Connector List */}
+              <div className="space-y-2.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block px-1">
+                  Select Your Assistant:
+                </span>
+                {connectors.map((c) => {
+                  const isSelected = selectedConnector === c.id;
+                  return (
+                    <button
+                      key={c.id}
+                      onClick={() => setSelectedConnector(c.id)}
+                      className={`w-full text-left p-3.5 rounded-2xl border transition-all flex items-center justify-between ${
+                        isSelected
+                          ? "bg-slate-900 border-emerald-500 ring-2 ring-emerald-500/20 shadow-lg"
+                          : "bg-slate-900/40 border-slate-800 hover:border-slate-700 hover:bg-slate-900/70"
+                      }`}
+                    >
+                      <div className="space-y-0.5">
+                        <div className="font-semibold text-sm text-slate-100 flex items-center gap-2">
+                          <span>{c.name}</span>
+                        </div>
+                        <span className="text-xs text-slate-400 block">{c.category}</span>
+                      </div>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                        {c.badge}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Connector Configuration Pane */}
+              <div className="md:col-span-2 p-6 rounded-2xl bg-slate-900/70 border border-slate-800 space-y-6">
+                <div className="space-y-1.5 pb-4 border-b border-slate-800">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                      <span>{currentConnectorData.name}</span>
+                    </h3>
+                    <span className="text-xs font-mono px-2.5 py-1 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                      {currentConnectorData.category}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400">{currentConnectorData.description}</p>
+                </div>
+
+                {/* 1-Click Command Snippet */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                      <Terminal className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>Option A: 1-Click Terminal Command</span>
+                    </span>
+                    <button
+                      onClick={() => copyCode(currentConnectorData.command, "cmd")}
+                      className="text-xs text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                    >
+                      {copiedSnippet === "cmd" ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                      <span>{copiedSnippet === "cmd" ? "Copied!" : "Copy Command"}</span>
+                    </button>
+                  </div>
+                  <pre className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-emerald-400 overflow-x-auto select-all">
+                    {currentConnectorData.command}
+                  </pre>
+                </div>
+
+                {/* Manual JSON / Config Snippet */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                      <Code2 className="h-3.5 w-3.5 text-indigo-400" />
+                      <span>Option B: Configuration Snippet</span>
+                    </span>
+                    <button
+                      onClick={() => copyCode(currentConnectorData.jsonConfig, "json")}
+                      className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+                    >
+                      {copiedSnippet === "json" ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                      <span>{copiedSnippet === "json" ? "Copied!" : "Copy Snippet"}</span>
+                    </button>
+                  </div>
+                  <pre className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300 overflow-x-auto leading-relaxed select-all">
+                    {currentConnectorData.jsonConfig}
+                  </pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Tab 1: Knowledge Graph Canvas */}
         {activeTab === "graph" && (
@@ -554,50 +832,6 @@ export default function DashboardPage() {
           </div>
         )}
       </main>
-
-      {/* API Key Modal */}
-      {showKeyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-lg w-full space-y-5 shadow-2xl">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Key className="h-5 w-5 text-indigo-400" />
-                <h3 className="font-bold text-lg">Your Cursor API Key</h3>
-              </div>
-              <button onClick={() => setShowKeyModal(false)} className="text-slate-400 hover:text-white text-sm">
-                ✕
-              </button>
-            </div>
-
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Use this secret key to connect Cursor, Claude Code, or any external MCP client directly to your private ContextSync vault.
-            </p>
-
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3">
-              <code className="text-xs font-mono text-indigo-300 break-all">{user?.api_key}</code>
-              <button
-                onClick={handleCopyKey}
-                className="p-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-colors shrink-0"
-                title="Copy API Key"
-              >
-                {copiedKey ? <Check className="h-4 w-4 text-emerald-300" /> : <Copy className="h-4 w-4" />}
-              </button>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-2 text-xs text-slate-400">
-              <strong className="text-slate-300">How to use in Cursor:</strong>
-              <p>Add header <code>X-API-Key: {user?.api_key}</code> to your MCP server configuration.</p>
-            </div>
-
-            <button
-              onClick={() => setShowKeyModal(false)}
-              className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm font-semibold transition-colors"
-            >
-              Done
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
