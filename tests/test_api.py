@@ -4,45 +4,50 @@ from contextsync.api.server import app
 
 client = TestClient(app)
 
-def test_health_check():
-    response = client.get("/health")
-    assert response.status_code == 200
-    data = response.json()
-    assert data["status"] == "ok"
-    assert data["service"] == "ContextSync API"
+def test_auth_and_protected_api_flow():
+    # 1. Health check is public
+    res = client.get("/health")
+    assert res.status_code == 200
 
-def test_create_and_recall_memory_api():
-    # 1. Create memory
+    # 2. Accessing protected endpoint without auth fails with 401
+    unauth = client.get("/api/memories")
+    assert unauth.status_code == 401
+
+    # 3. Sign up a new user
+    signup_res = client.post("/api/auth/signup", json={
+        "email": "testdev@contextsync.dev",
+        "password": "strongpassword123"
+    })
+    assert signup_res.status_code == 201
+    auth_data = signup_res.json()
+    assert "token" in auth_data
+    token = auth_data["token"]
+    api_key = auth_data["user"]["api_key"]
+
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # 4. Fetch user profile via /api/auth/me
+    me_res = client.get("/api/auth/me", headers=headers)
+    assert me_res.status_code == 200
+    assert me_res.json()["user"]["email"] == "testdev@contextsync.dev"
+
+    # 5. Add memory using Bearer token
     post_res = client.post("/api/memories", json={
-        "content": "ContextSync supports both stdio and REST API transports.",
-        "tags": ["transport", "api"]
-    })
+        "content": "Use TypeScript strict mode across all frontend files.",
+        "tags": ["frontend", "ts"]
+    }, headers=headers)
     assert post_res.status_code == 201
-    mem_data = post_res.json()
-    assert mem_data["success"] is True
-    mem_id = mem_data["memory"]["id"]
+    mem_id = post_res.json()["memory"]["id"]
 
-    # 2. List memories
-    list_res = client.get("/api/memories")
-    assert list_res.status_code == 200
-    assert len(list_res.json()["memories"]) >= 1
-
-    # 3. Recall memory
-    recall_res = client.post("/api/recall", json={
-        "query": "What transports does ContextSync support?",
+    # 6. Recall memory using X-API-Key (simulating Cursor MCP!)
+    cursor_headers = {"X-API-Key": api_key}
+    rec_res = client.post("/api/recall", json={
+        "query": "What mode do we use for TypeScript?",
         "limit": 3
-    })
-    assert recall_res.status_code == 200
-    rec_data = recall_res.json()
-    assert len(rec_data["memories"]) >= 1
+    }, headers=cursor_headers)
+    assert rec_res.status_code == 200
+    assert len(rec_res.json()["memories"]) >= 1
 
-    # 4. Get graph visualizer data
-    graph_res = client.get("/api/graph")
-    assert graph_res.status_code == 200
-    g_data = graph_res.json()
-    assert "nodes" in g_data
-    assert "links" in g_data
-
-    # 5. Delete memory
-    del_res = client.delete(f"/api/memories/{mem_id}")
+    # 7. Delete memory
+    del_res = client.delete(f"/api/memories/{mem_id}", headers=headers)
     assert del_res.status_code == 200

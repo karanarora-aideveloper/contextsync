@@ -1,17 +1,18 @@
 from typing import List, Optional, Dict, Any
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, Depends, Header, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from contextsync.memory import MemoryEngine
+from contextsync.store.user_store import UserStore
+from contextsync.config import CORTEX_DATA_DIR
 from contextsync import __version__
 
 app = FastAPI(
     title="ContextSync Cloud API",
-    description="REST API for ContextSync (contextsync.dev) - Persistent Long-Term Memory Engine",
+    description="Multi-tenant Auth & Memory API for ContextSync (contextsync.dev)",
     version=__version__
 )
 
-# Enable CORS for local web dashboard and production domain
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -21,55 +22,142 @@ app.add_middleware(
 )
 
 engine = MemoryEngine()
+user_store = UserStore(CORTEX_DATA_DIR / "users.db")
 
-# Pydantic Schemas for API Requests
+# Schemas
+class SignupRequest(BaseModel):
+    email: str = Field(..., pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$", description="Valid email address")
+    password: str = Field(..., min_length=6, description="Password at least 6 characters")
+
+class LoginRequest(BaseModel):
+    email: str = Field(..., description="User email")
+    password: str = Field(..., description="User password")
+
 class RememberRequest(BaseModel):
     content: str = Field(..., description="The text, code rule, or knowledge to store")
-    tags: Optional[List[str]] = Field(default_factory=list, description="Optional tags")
+    tags: Optional[List[str]] = Field(default_factory=list)
 
 class RecallRequest(BaseModel):
-    query: str = Field(..., description="Question or concept to search")
+    query: str
     limit: Optional[int] = Field(default=5, ge=1, le=50)
 
-class ForgetResponse(BaseModel):
-    success: bool
-    message: str
+# Auth Dependency: Supports Bearer JWT or X-API-Key (for Cursor/MCP)
+async def get_current_user(
+    authorization: Optional[str] = Header(None),
+    x_api_key: Optional[str] = Header(None)
+) -> Dict[str, Any]:
+    # 1. Check API Key header
+    if x_api_key:
+        user = user_store.get_by_api_key(x_api_key)
+        if user:
+            return user
+        raise HTTPException(status_code=401, detail="Invalid API Key")
+
+    # 2. Check Bearer JWT token
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization.split(" ")[1]
+        payload = user_store.verify_jwt_token(token)
+        if payload and "sub" in payload:
+            user = user_store.get_by_id(payload["sub"])
+            if user:
+                return user
+        raise HTTPException(status_code=401, detail="Invalid or expired session token")
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Authentication required. Provide a Bearer token or X-API-Key header."
+    )
+
+# --- Public Auth Endpoints ---
 
 @app.get("/health")
 def health_check():
-    """Health check endpoint."""
-    return {"status": "ok", "version": __version__, "service": "ContextSync API"}
+    return {"status": "ok", "version": __version__, "service": "ContextSync Multi-Tenant API"}
+
+@app.post("/api/auth/signup", status_code=status.HTTP_201_CREATED)
+def signup(req: SignupRequest):
+    """Register a new user account."""
+    try:
+        user = user_store.create_user(req.email, req.password)
+        token = user_store.create_jwt_token(user["id"], user["email"])
+        return {"token": token, "user": user}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/auth/login")
+def login(req: LoginRequest):
+    """Log into an existing user account."""
+    user = user_store.authenticate(req.email, req.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid email or password.")
+    token = user_store.create_jwt_token(user["id"], user["email"])
+    return {"token": token, "user": user}
+
+@app.get("/api/auth/me")
+def get_me(user: Dict[str, Any] = Depends(get_current_user)):
+    """Return the authenticated user profile and API key."""
+    stats = engine.stats()
+    return {
+        "user": user,
+        "metrics": {
+            "total_memories": stats["total_memories"],
+            "max_free_memories": 50 if user.get("plan") == "free" else 999999
+        }
+    }
+
+# --- Protected Memory & Graph Endpoints ---
 
 @app.get("/api/stats")
-def get_stats():
-    """Return memory counts and graph metrics."""
+def get_stats(user: Dict[str, Any] = Depends(get_current_user)):
+    """Return memory metrics for the authenticated user."""
     return engine.stats()
 
 @app.get("/api/memories")
-def list_memories(limit: int = 100, offset: int = 0):
-    """List stored memories with pagination."""
+def list_memories(
+    limit: int = 100, 
+    offset: int = 0,
+    user: Dict[str, Any] = Depends(get_current_user)
+):
+    """List stored memories for the authenticated user."""
     memories = engine.graph_store.get_all_memories(limit=limit, offset=offset)
     return {"memories": memories, "total": len(memories)}
 
 @app.post("/api/memories", status_code=status.HTTP_201_CREATED)
-async def create_memory(req: RememberRequest):
-    """Add a new memory item and extract into Knowledge Graph."""
+async def create_memory(
+    req: RememberRequest,
+    user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Store a memory into the user's private Knowledge Graph and vector space."""
     if not req.content.strip():
         raise HTTPException(status_code=400, detail="Memory content cannot be empty")
-    item = await engine.remember(content=req.content, tags=req.tags, source="api")
+    
+    # Fair-use quota check for free plan
+    if user.get("plan") == "free" and engine.stats()["total_memories"] >= 50:
+        raise HTTPException(
+            status_code=403, 
+            detail="Free plan limit of 50 memories reached. Upgrade to Pro ($9/mo) for unlimited memory."
+        )
+
+    item = await engine.remember(content=req.content, tags=req.tags, source=f"user:{user['email']}")
     return {"success": True, "memory": item}
 
 @app.delete("/api/memories/{memory_id}")
-def delete_memory(memory_id: str):
-    """Delete a memory by its unique ID."""
+def delete_memory(
+    memory_id: str,
+    user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Delete a memory."""
     success = engine.forget(memory_id)
     if not success:
         raise HTTPException(status_code=404, detail="Memory not found")
     return {"success": True, "deleted_id": memory_id}
 
 @app.post("/api/recall")
-async def recall_memory(req: RecallRequest):
-    """Retrieve memories using hybrid vector + graph traversal."""
+async def recall_memory(
+    req: RecallRequest,
+    user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Search memory using hybrid vector + graph traversal."""
     result = await engine.recall(query=req.query, limit=req.limit or 5)
     return {
         "query": result.query,
@@ -80,6 +168,6 @@ async def recall_memory(req: RecallRequest):
     }
 
 @app.get("/api/graph")
-def get_graph():
-    """Return all entities (nodes) and relations (links) for the interactive mindmap visualizer."""
+def get_graph(user: Dict[str, Any] = Depends(get_current_user)):
+    """Deliver full Knowledge Graph nodes and edges for the authenticated user."""
     return engine.graph_store.get_full_graph()

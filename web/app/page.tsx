@@ -28,10 +28,10 @@ export default function HomePage() {
           </div>
 
           <nav className="flex items-center gap-6 text-sm">
-            <Link href="#features" className="text-slate-400 hover:text-white transition-colors">
+            <Link href="#features" className="text-slate-400 hover:text-white transition-colors hidden sm:block">
               Features
             </Link>
-            <Link href="#pricing" className="text-slate-400 hover:text-white transition-colors">
+            <Link href="#pricing" className="text-slate-400 hover:text-white transition-colors hidden sm:block">
               Pricing
             </Link>
             <a
@@ -41,16 +41,23 @@ export default function HomePage() {
               className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
             >
               <GithubIcon className="h-4 w-4" />
-              <span>GitHub</span>
+              <span className="hidden sm:inline">GitHub</span>
             </a>
             <Link
-              href="/dashboard"
+              href="/login"
+              className="text-slate-300 hover:text-white font-medium transition-colors"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/signup"
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium shadow-md shadow-indigo-500/20 transition-all"
             >
-              <span>Open Dashboard</span>
+              <span>Get Started</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
           </nav>
+
         </div>
       </header>
 
