@@ -22,7 +22,8 @@ import {
   ShieldCheck, 
   Plug, 
   Terminal,
-  Code2
+  Code2,
+  Info
 } from "lucide-react";
 import { useTheme } from "../../components/ThemeContext";
 import ThemeToggle from "../../components/ThemeToggle";
@@ -57,6 +58,40 @@ interface UserProfile {
 }
 
 const API_BASE = "http://127.0.0.1:8000";
+
+function MetricTooltip({ title, description }: { title: string; description: string }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div 
+      className="relative inline-flex items-center ml-1.5"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="h-4 w-4 rounded-full inline-flex items-center justify-center text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none"
+        aria-label={`Information about ${title}`}
+      >
+        <Info className="h-3 w-3" />
+      </button>
+
+      {open && (
+        <div className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-slate-900 text-white text-xs rounded-xl shadow-2xl border border-slate-700 z-50 pointer-events-none">
+          <div className="font-bold text-xs text-indigo-400 mb-1 flex items-center gap-1.5">
+            <Info className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
+            <span>{title}</span>
+          </div>
+          <p className="text-[11px] leading-relaxed text-slate-300 font-normal">
+            {description}
+          </p>
+          <div className="w-2 h-2 bg-slate-900 border-r border-b border-slate-700 rotate-45 absolute -bottom-1 left-2" />
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -455,7 +490,13 @@ print(res.formatted_context)`
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div className="space-y-1">
-              <span className="text-xs uppercase font-medium text-slate-500 dark:text-slate-400">Total Memories</span>
+              <div className="flex items-center">
+                <span className="text-xs uppercase font-medium text-slate-500 dark:text-slate-400">Total Memories</span>
+                <MetricTooltip
+                  title="Total Memories"
+                  description="Persistent rules, codebase conventions, and architectural facts stored and indexed in your embedded LanceDB vector database."
+                />
+              </div>
               <div className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.total_memories}</div>
               <span className="text-xs text-slate-500">Indexed in LanceDB</span>
             </div>
@@ -466,7 +507,13 @@ print(res.formatted_context)`
 
           <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div className="space-y-1">
-              <span className="text-xs uppercase font-medium text-slate-500 dark:text-slate-400">Extracted Entities</span>
+              <div className="flex items-center">
+                <span className="text-xs uppercase font-medium text-slate-500 dark:text-slate-400">Extracted Entities</span>
+                <MetricTooltip
+                  title="Knowledge Graph Entities"
+                  description="Key concepts, technologies, modules, schemas, and people extracted from your memories by Gemini 2.0 Flash into SQLite."
+                />
+              </div>
               <div className="text-3xl font-extrabold text-purple-600 dark:text-purple-400">{stats.entities}</div>
               <span className="text-xs text-slate-500">Entities in Knowledge Graph</span>
             </div>
@@ -477,7 +524,13 @@ print(res.formatted_context)`
 
           <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div className="space-y-1">
-              <span className="text-xs uppercase font-medium text-slate-500 dark:text-slate-400">Graph Relations</span>
+              <div className="flex items-center">
+                <span className="text-xs uppercase font-medium text-slate-500 dark:text-slate-400">Graph Relations</span>
+                <MetricTooltip
+                  title="Graph Relations (Connections)"
+                  description="Directional semantic connections linking entities (e.g. Apollo USES PostgreSQL, Alice MAINTAINS Apollo). Enables multi-hop AI reasoning."
+                />
+              </div>
               <div className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">{stats.relations}</div>
               <span className="text-xs text-slate-500">Multi-Hop Connections</span>
             </div>
