@@ -491,14 +491,14 @@ print(res.formatted_context)`
           <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div className="space-y-1">
               <div className="flex items-center">
-                <span className="text-xs uppercase font-medium text-slate-500 dark:text-slate-400">Total Memories</span>
+                <span className="text-xs uppercase font-semibold tracking-wider text-slate-500 dark:text-slate-400">Saved Rules</span>
                 <MetricTooltip
-                  title="Total Memories"
-                  description="Persistent rules, codebase conventions, and architectural facts stored and indexed in your embedded LanceDB vector database."
+                  title="Saved Rules & Memories"
+                  description="Things your AI must always remember — like your preferred tech stack, styling conventions, and project rules."
                 />
               </div>
               <div className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.total_memories}</div>
-              <span className="text-xs text-slate-500">Indexed in LanceDB</span>
+              <span className="text-xs text-slate-500">Project rules & decisions</span>
             </div>
             <div className="h-12 w-12 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
               <Database className="h-6 w-6" />
@@ -508,14 +508,14 @@ print(res.formatted_context)`
           <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div className="space-y-1">
               <div className="flex items-center">
-                <span className="text-xs uppercase font-medium text-slate-500 dark:text-slate-400">Extracted Entities</span>
+                <span className="text-xs uppercase font-semibold tracking-wider text-slate-500 dark:text-slate-400">Topics & Tools</span>
                 <MetricTooltip
-                  title="Knowledge Graph Entities"
-                  description="Key concepts, technologies, modules, schemas, and people extracted from your memories by Gemini 2.0 Flash into SQLite."
+                  title="Topics & Tools Learned"
+                  description="Specific technologies, libraries, and components your AI recognized across your project (e.g. Next.js, Tailwind, Supabase)."
                 />
               </div>
               <div className="text-3xl font-extrabold text-purple-600 dark:text-purple-400">{stats.entities}</div>
-              <span className="text-xs text-slate-500">Entities in Knowledge Graph</span>
+              <span className="text-xs text-slate-500">Tech stack & components</span>
             </div>
             <div className="h-12 w-12 rounded-xl bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400">
               <Brain className="h-6 w-6" />
@@ -525,14 +525,14 @@ print(res.formatted_context)`
           <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div className="space-y-1">
               <div className="flex items-center">
-                <span className="text-xs uppercase font-medium text-slate-500 dark:text-slate-400">Graph Relations</span>
+                <span className="text-xs uppercase font-semibold tracking-wider text-slate-500 dark:text-slate-400">Connected Dots</span>
                 <MetricTooltip
-                  title="Graph Relations (Connections)"
-                  description="Directional semantic connections linking entities (e.g. Apollo USES PostgreSQL, Alice MAINTAINS Apollo). Enables multi-hop AI reasoning."
+                  title="Connected Dots (Relationships)"
+                  description="How things connect in your project (e.g. 'Frontend uses Tailwind', 'API connects to Database'). Helps your AI see the big picture."
                 />
               </div>
               <div className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">{stats.relations}</div>
-              <span className="text-xs text-slate-500">Multi-Hop Connections</span>
+              <span className="text-xs text-slate-500">Smart links between topics</span>
             </div>
             <div className="h-12 w-12 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
               <Share2 className="h-6 w-6" />
@@ -551,8 +551,8 @@ print(res.formatted_context)`
             }`}
           >
             <Plug className="h-4 w-4" />
-            <span>Connect Assistants</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 font-mono">Setup</span>
+            <span>Connect AI</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 font-mono">1-Click</span>
           </button>
           <button
             onClick={() => setActiveTab("graph")}
@@ -563,7 +563,7 @@ print(res.formatted_context)`
             }`}
           >
             <Share2 className="h-4 w-4" />
-            <span>Knowledge Graph (Mindmap)</span>
+            <span>Brain Map</span>
           </button>
           <button
             onClick={() => setActiveTab("memories")}
@@ -574,7 +574,7 @@ print(res.formatted_context)`
             }`}
           >
             <Database className="h-4 w-4" />
-            <span>My Memories ({memories.length})</span>
+            <span>Saved Rules ({memories.length})</span>
           </button>
           <button
             onClick={() => setActiveTab("recall")}
@@ -585,7 +585,7 @@ print(res.formatted_context)`
             }`}
           >
             <Search className="h-4 w-4" />
-            <span>Recall Playground</span>
+            <span>Ask AI</span>
           </button>
         </div>
 
@@ -706,23 +706,23 @@ print(res.formatted_context)`
           </div>
         )}
 
-        {/* Tab 1: Knowledge Graph Canvas */}
+        {/* Tab 1: Brain Map Canvas */}
         {activeTab === "graph" && (
           <div className="space-y-6">
             <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="font-semibold text-lg text-slate-900 dark:text-white">Interactive Knowledge Graph</h2>
+                  <h2 className="font-semibold text-lg text-slate-900 dark:text-white">Visual Brain Map</h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Click on any node to view its multi-hop connections extracted by Gemini 2.0 Flash.
+                    Click on any topic to see what it links to in your project.
                   </p>
                 </div>
-                <span className="text-xs font-mono text-slate-500">{graphData.nodes.length} nodes · {graphData.links.length} edges</span>
+                <span className="text-xs font-mono text-slate-500">{graphData.nodes.length} topics · {graphData.links.length} links</span>
               </div>
 
               <div className="min-h-[350px] rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 p-6 flex flex-wrap items-center justify-center gap-6 relative overflow-hidden">
                 {graphData.nodes.length === 0 ? (
-                  <div className="text-center text-slate-500 text-sm">No entities stored yet. Add a memory to populate the graph.</div>
+                  <div className="text-center text-slate-500 text-sm">No topics learned yet. Teach your AI a rule to build its map.</div>
                 ) : (
                   graphData.nodes.map((node, idx) => {
                     const isSelected = selectedNode?.id === node.id;
@@ -754,7 +754,7 @@ print(res.formatted_context)`
                 <div className="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-500/30 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-sm text-indigo-900 dark:text-indigo-300">
-                      Connections for: <strong className="text-indigo-700 dark:text-white">{selectedNode.id}</strong> ({selectedNode.type})
+                      Connections for: <strong className="text-indigo-700 dark:text-white">{selectedNode.id}</strong>
                     </span>
                     <button onClick={() => setSelectedNode(null)} className="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white">
                       Close
@@ -766,7 +766,7 @@ print(res.formatted_context)`
                       .map((link, idx) => (
                         <div key={idx} className="text-xs font-mono text-slate-700 dark:text-slate-300 flex items-center gap-2">
                           <span className="font-bold text-indigo-600 dark:text-indigo-400">{link.source}</span>
-                          <span className="text-slate-400 dark:text-slate-500">--[{link.relation}]--&gt;</span>
+                          <span className="text-slate-400 dark:text-slate-500">── {link.relation.replace(/_/g, " ").toLowerCase()} ──&gt;</span>
                           <span className="font-bold text-purple-600 dark:text-purple-400">{link.target}</span>
                           {link.context && <span className="text-slate-500">({link.context})</span>}
                         </div>
@@ -778,33 +778,33 @@ print(res.formatted_context)`
           </div>
         )}
 
-        {/* Tab 2: Memories List */}
+        {/* Tab 2: Saved Rules List */}
         {activeTab === "memories" && (
           <div className="grid md:grid-cols-3 gap-8">
             <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 h-fit">
               <h2 className="font-semibold text-base flex items-center gap-2 text-slate-900 dark:text-white">
                 <Plus className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-                <span>Store Memory</span>
+                <span>Teach My AI a Rule</span>
               </h2>
               <form onSubmit={handleAddMemory} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs text-slate-600 dark:text-slate-400 font-medium">Memory Content or Rule</label>
+                  <label className="text-xs text-slate-600 dark:text-slate-400 font-medium">What should your AI always remember?</label>
                   <textarea
                     rows={4}
                     value={newContent}
                     onChange={(e) => setNewContent(e.target.value)}
-                    placeholder="e.g. Always write pure functions for utility modules."
+                    placeholder="e.g. Always use Tailwind CSS for styling and TypeScript for components."
                     className="w-full rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500"
                     required
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs text-slate-600 dark:text-slate-400 font-medium">Tags (comma-separated)</label>
+                  <label className="text-xs text-slate-600 dark:text-slate-400 font-medium">Tags (optional)</label>
                   <input
                     type="text"
                     value={newTags}
                     onChange={(e) => setNewTags(e.target.value)}
-                    placeholder="e.g. conventions, frontend, rules"
+                    placeholder="e.g. frontend, styling, rules"
                     className="w-full rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500"
                   />
                 </div>
@@ -813,17 +813,17 @@ print(res.formatted_context)`
                   disabled={isAdding}
                   className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-all disabled:opacity-50 shadow-sm"
                 >
-                  {isAdding ? "Extracting & Storing..." : "Save to Vault"}
+                  {isAdding ? "Teaching AI..." : "Save Rule"}
                 </button>
               </form>
             </div>
 
             <div className="md:col-span-2 space-y-4">
-              <h2 className="font-semibold text-base text-slate-800 dark:text-slate-300">Saved Facts & Rules ({memories.length})</h2>
+              <h2 className="font-semibold text-base text-slate-800 dark:text-slate-300">Saved Rules & Decisions ({memories.length})</h2>
               <div className="space-y-3">
                 {memories.length === 0 ? (
                   <div className="p-8 text-center text-slate-500 bg-white dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    No memories found. Add your first codebase rule above!
+                    No rules saved yet. Teach your AI its first rule on the left!
                   </div>
                 ) : (
                   memories.map((m) => (
@@ -834,7 +834,7 @@ print(res.formatted_context)`
                       <div className="space-y-2">
                         <p className="text-sm text-slate-900 dark:text-slate-200 font-medium">{m.content}</p>
                         {m.summary && (
-                          <p className="text-xs text-indigo-600 dark:text-indigo-400 font-mono">Summary: {m.summary}</p>
+                          <p className="text-xs text-indigo-600 dark:text-indigo-400 font-mono">Key Takeaway: {m.summary}</p>
                         )}
                         <div className="flex flex-wrap items-center gap-2 pt-1">
                           {m.tags && m.tags.map((t, idx) => (
@@ -852,7 +852,7 @@ print(res.formatted_context)`
                       <button
                         onClick={() => handleDeleteMemory(m.id)}
                         className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
-                        title="Delete Memory"
+                        title="Delete Rule"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -864,20 +864,20 @@ print(res.formatted_context)`
           </div>
         )}
 
-        {/* Tab 3: Recall Playground */}
+        {/* Tab 3: Ask AI */}
         {activeTab === "recall" && (
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
               <h2 className="font-semibold text-lg flex items-center gap-2 text-slate-900 dark:text-white">
                 <Sparkles className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                <span>Test Memory Retrieval (Hybrid Vector + Graph)</span>
+                <span>Ask Your AI Memory</span>
               </h2>
               <form onSubmit={handleRecall} className="flex gap-3">
                 <input
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Ask a question (e.g. Who maintains Apollo? What coding style do we use?)"
+                  placeholder="Ask anything (e.g. What tech stack are we using? What are our styling rules?)"
                   className="flex-1 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500"
                   required
                 />
@@ -887,14 +887,14 @@ print(res.formatted_context)`
                   className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-all disabled:opacity-50 flex items-center gap-2 shadow-sm"
                 >
                   <Search className="h-4 w-4" />
-                  <span>{isSearching ? "Recalling..." : "Recall"}</span>
+                  <span>{isSearching ? "Searching..." : "Ask AI"}</span>
                 </button>
               </form>
             </div>
 
             {recallResult && (
               <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/80 border border-indigo-200 dark:border-indigo-500/40 shadow-sm space-y-3">
-                <span className="text-xs uppercase font-bold text-indigo-600 dark:text-indigo-400">Context Provided to AI Assistant:</span>
+                <span className="text-xs uppercase font-bold text-indigo-600 dark:text-indigo-400">Context Automatically Sent to Cursor / Claude:</span>
                 <pre className="text-xs font-mono bg-slate-950 p-4 rounded-xl text-emerald-400 whitespace-pre-wrap leading-relaxed border border-slate-800 shadow-inner select-all">
                   {recallResult.formatted_context}
                 </pre>
