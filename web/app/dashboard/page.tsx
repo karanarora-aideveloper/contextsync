@@ -102,7 +102,7 @@ function MetricTooltip({ title, description }: { title: string; description: str
 export default function DashboardPage() {
   const router = useRouter();
   const { theme } = useTheme();
-  const [activeTab, setActiveTab] = useState<"graph" | "memories" | "recall" | "connectors">("graph");
+  const [activeTab, setActiveTab] = useState<"graph" | "memories" | "recall" | "connectors" | "topics">("graph");
 
   const [stats, setStats] = useState({ total_memories: 0, entities: 0, relations: 0 });
   const [memories, setMemories] = useState<Memory[]>([]);
@@ -606,10 +606,13 @@ print(res.formatted_context)`
             </div>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div 
+            onClick={() => setActiveTab("topics")}
+            className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between cursor-pointer hover:border-purple-400 dark:hover:border-purple-500/50 transition-colors group"
+          >
             <div className="space-y-1">
               <div className="flex items-center">
-                <span className="text-xs uppercase font-semibold tracking-wider text-slate-500 dark:text-slate-400">Topics & Tools</span>
+                <span className="text-xs uppercase font-semibold tracking-wider text-slate-500 dark:text-slate-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">Topics & Tools</span>
                 <MetricTooltip
                   title="Topics & Tools Learned"
                   description="Specific technologies, libraries, and components your AI recognized across your project (e.g. Next.js, Tailwind, Supabase)."
