@@ -2,7 +2,7 @@ from typing import Optional
 import json
 import re
 from contextsync.models import ExtractionResult, Entity, Relation
-from contextsync.config import GEMINI_API_KEY, DEFAULT_LLM_MODEL
+from contextsync.config import GEMINI_API_KEY, DEEPSEEK_API_KEY, DEFAULT_LLM_MODEL
 
 EXTRACTION_SYSTEM_PROMPT = """You are Cortex, an expert knowledge graph and memory extraction engine.
 Your task is to analyze the input text and extract key knowledge components:
@@ -10,33 +10,70 @@ Your task is to analyze the input text and extract key knowledge components:
 2. Relationships: Directed connections between these entities (e.g., 'Alice' -> 'MANAGES' -> 'Project Apollo', 'Project Apollo' -> 'USES' -> 'PostgreSQL').
 3. Summary: A single crisp sentence distilling the core takeaway.
 
-Be precise, omit fluff, and normalize entity names (use standard casing)."""
+CRITICAL INSTRUCTIONS:
+- Be precise, omit fluff, and normalize entity names (use standard casing).
+- DO NOT split compound nouns, branded terms, or tightly coupled product names. For example, extract "Google Antigravity" as a single entity, not "Google" and "Antigravity". Extract "Visual Studio Code" as one entity, not "Visual Studio" and "Code".
+- Keep entities meaningful and atomic but structurally intact."""
 
 class KnowledgeExtractor:
-    """Extracts entities and relationships from text using Gemini 2.0 Flash or heuristic fallback."""
+    """Extracts entities and relationships from text using DeepSeek, Gemini, or fallback."""
 
     def __init__(self, api_key: Optional[str] = None, model: str = DEFAULT_LLM_MODEL):
         self.api_key = api_key or GEMINI_API_KEY
+        self.deepseek_key = DEEPSEEK_API_KEY
         self.model = model
-        self._client = None
+        
+        self._gemini_client = None
+        self._openai_client = None
 
-        if self.api_key:
+        if self.deepseek_key:
+            try:
+                from openai import AsyncOpenAI
+                self._openai_client = AsyncOpenAI(api_key=self.deepseek_key, base_url="https://api.deepseek.com/v1")
+            except Exception:
+                pass
+                
+        if self.api_key and not self._openai_client:
             try:
                 from google import genai
-                self._client = genai.Client(api_key=self.api_key)
+                self._gemini_client = genai.Client(api_key=self.api_key)
             except Exception:
-                self._client = None
+                pass
 
     async def extract(self, text: str) -> ExtractionResult:
         """Extract entities and relations from text."""
         if not text or not text.strip():
             return ExtractionResult()
 
-        if self._client:
+        if self._openai_client:
+            try:
+                schema = ExtractionResult.model_json_schema()
+                prompt = f"{EXTRACTION_SYSTEM_PROMPT}\n\nInput text to extract:\n\"\"\"\n{text}\n\"\"\"\n\nRespond ONLY with a valid JSON object matching exactly this JSON schema:\n{json.dumps(schema)}"
+                response = await self._openai_client.chat.completions.create(
+                    model="deepseek-chat",
+                    messages=[
+                        {"role": "system", "content": prompt}
+                    ],
+                    response_format={"type": "json_object"},
+                    temperature=0.1
+                )
+                
+                content = response.choices[0].message.content
+                data = json.loads(content)
+                
+                # DeepSeek might wrap the response in the schema properties directly or in a root key
+                # So we ensure it maps to ExtractionResult
+                return ExtractionResult(**data)
+            except Exception as e:
+                # Fallback to heuristic
+                print(f"DeepSeek extraction error: {e}")
+                pass
+
+        if self._gemini_client:
             try:
                 from google.genai import types
                 prompt = f"{EXTRACTION_SYSTEM_PROMPT}\n\nInput text to extract:\n\"\"\"\n{text}\n\"\"\""
-                response = self._client.models.generate_content(
+                response = self._gemini_client.models.generate_content(
                     model=self.model,
                     contents=prompt,
                     config=types.GenerateContentConfig(
