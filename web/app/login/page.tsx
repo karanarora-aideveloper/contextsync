@@ -61,8 +61,8 @@ export default function LoginPage() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
         <Link href="/" className="inline-flex items-center gap-2">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/25">
-            <Brain className="h-5 w-5 text-white" />
+          <div className="h-10 w-10 rounded-xl overflow-hidden shadow-lg shadow-indigo-500/25 border border-slate-200 dark:border-slate-800">
+            <img src="/logo.jpg" alt="ContextSync" className="h-full w-full object-cover" />
           </div>
           <span className="font-extrabold text-2xl tracking-tight text-slate-900 dark:text-white">ContextSync</span>
         </Link>

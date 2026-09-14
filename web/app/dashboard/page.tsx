@@ -130,6 +130,12 @@ export default function DashboardPage() {
   const [recallResult, setRecallResult] = useState<any>(null);
   const [isSearching, setIsSearching] = useState(false);
 
+  // Upgrade Modal State
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<string>("free");
+  const [llmKey, setLlmKey] = useState("");
+  const [isUpgrading, setIsUpgrading] = useState(false);
+
   const [loading, setLoading] = useState(true);
 
   // Auth Guard & Fetch
@@ -184,6 +190,39 @@ export default function DashboardPage() {
       console.error("Failed to connect to API:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUpgrade = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedPlan === "byok" && !llmKey.trim()) {
+      alert("Please provide an API key for the BYOK plan.");
+      return;
+    }
+    const token = localStorage.getItem("ctx_token");
+    if (!token) return;
+    
+    setIsUpgrading(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/user/upgrade`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ plan: selectedPlan, llm_key: selectedPlan === "byok" ? llmKey : undefined })
+      });
+      if (res.ok) {
+        setIsUpgradeModalOpen(false);
+        await fetchUserData(token); // Refresh profile to show new plan
+      } else {
+        const err = await res.json();
+        alert(err.detail || "Failed to upgrade plan.");
+      }
+    } catch (err) {
+      alert("Error upgrading plan.");
+    } finally {
+      setIsUpgrading(false);
     }
   };
 
@@ -468,17 +507,16 @@ print(res.formatted_context)`
         theme === "light" ? "bg-white/80 border-slate-200" : "bg-slate-900/50 border-slate-800/80"
       }`}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/" className={`flex items-center gap-2 transition-colors mr-2 ${
-              theme === "light" ? "text-slate-500 hover:text-slate-900" : "text-slate-400 hover:text-white"
-            }`}>
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow">
-              <Brain className="h-4 w-4 text-white" />
+          <div className="flex items-center gap-4">
+            <div className="h-9 w-9 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/50 shadow-sm">
+              <img 
+                src="/logo.jpg" 
+                alt="ContextSync Logo" 
+                className="h-full w-full object-cover"
+              />
             </div>
             <div>
-              <span className="font-bold tracking-tight">ContextSync Hub</span>
+              <span className="font-bold tracking-tight text-lg text-slate-900 dark:text-white">ContextSync</span>
               {user && (
                 <span className="ml-2 text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
                   {user.email}
@@ -489,12 +527,18 @@ print(res.formatted_context)`
 
           <div className="flex items-center gap-3">
             {/* Plan Badge */}
-            <span className={`text-xs px-2.5 py-1 rounded-full border flex items-center gap-1.5 font-medium ${
-              theme === "light" ? "bg-slate-100 border-slate-200 text-slate-700" : "bg-slate-800 border-slate-700 text-slate-300"
+            <button 
+              onClick={() => setIsUpgradeModalOpen(true)}
+              className={`text-xs px-2.5 py-1 rounded-full border flex items-center gap-1.5 font-medium transition-colors ${
+              theme === "light" ? "bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700" : "bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300"
             }`}>
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-              <span>{user?.plan === 'pro' ? 'Pro Plan ($9/mo)' : 'Free Tier (50 Max)'}</span>
-            </span>
+              <span>
+                {user?.plan === 'pro' ? 'Pro Plan ($9/mo)' : 
+                 user?.plan === 'byok' ? 'BYOK Plan' : 
+                 'Free Tier (50 Max)'}
+              </span>
+            </button>
 
             {/* Quick Key Copy */}
             <button
@@ -1037,6 +1081,68 @@ print(res.formatted_context)`
                 </pre>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Upgrade Modal */}
+        {isUpgradeModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+            <div className={`w-full max-w-md p-6 rounded-2xl shadow-xl border ${theme === 'light' ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-700'}`}>
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-indigo-500" />
+                Upgrade Your Plan
+              </h3>
+              
+              <form onSubmit={handleUpgrade} className="space-y-4">
+                <div className="space-y-3">
+                  <label className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selectedPlan === 'free' ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                    <input type="radio" name="plan" value="free" checked={selectedPlan === 'free'} onChange={() => setSelectedPlan('free')} className="mt-1" />
+                    <div>
+                      <div className="font-semibold text-sm">Free Tier</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">Up to 50 memories. Best for testing.</div>
+                    </div>
+                  </label>
+
+                  <label className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selectedPlan === 'byok' ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                    <input type="radio" name="plan" value="byok" checked={selectedPlan === 'byok'} onChange={() => setSelectedPlan('byok')} className="mt-1" />
+                    <div className="flex-1">
+                      <div className="font-semibold text-sm">Bring Your Own Key</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">Unlimited memories. Provide your own LLM API key.</div>
+                      
+                      {selectedPlan === 'byok' && (
+                        <div className="mt-3">
+                          <input 
+                            type="password" 
+                            placeholder="Enter your LLM API Key"
+                            value={llmKey}
+                            onChange={(e) => setLlmKey(e.target.value)}
+                            className={`w-full rounded-lg text-sm px-3 py-2 border focus:outline-none focus:border-indigo-500 ${theme === 'light' ? 'border-slate-300 bg-white' : 'border-slate-600 bg-slate-800'}`}
+                            required
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </label>
+
+                  <label className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selectedPlan === 'pro' ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                    <input type="radio" name="plan" value="pro" checked={selectedPlan === 'pro'} onChange={() => setSelectedPlan('pro')} className="mt-1" />
+                    <div>
+                      <div className="font-semibold text-sm">Pro Plan ($9/mo)</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">Everything unlimited. We provide the intelligence.</div>
+                    </div>
+                  </label>
+                </div>
+
+                <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                  <button type="button" onClick={() => setIsUpgradeModalOpen(false)} className="px-4 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={isUpgrading} className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold disabled:opacity-50">
+                    {isUpgrading ? 'Upgrading...' : 'Confirm Upgrade'}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
       </main>

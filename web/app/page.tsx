@@ -17,8 +17,12 @@ export default function HomePage() {
       <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-slate-950/80 border-b border-slate-200 dark:border-slate-800/80 px-6 py-4 transition-colors duration-200">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
-              <Brain className="h-5 w-5 text-white" />
+            <div className="h-10 w-10 rounded-xl overflow-hidden shadow-lg shadow-indigo-500/25 border border-slate-200 dark:border-slate-800">
+              <img 
+                src="/logo.jpg" 
+                alt="ContextSync Logo" 
+                className="h-full w-full object-cover"
+              />
             </div>
             <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">
               ContextSync
